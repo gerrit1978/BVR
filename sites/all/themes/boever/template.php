@@ -54,7 +54,6 @@ function boever_preprocess_html(&$variables, $hook) {
  */
 /* -- Delete this line if you want to use this function
 function boever_preprocess_page(&$variables, $hook) {
-  $variables['sample_variable'] = t('Lorem ipsum.');
 }
 // */
 

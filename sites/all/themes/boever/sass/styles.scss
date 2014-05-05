@@ -12,6 +12,9 @@
 /* HTML element (SMACSS base) rules */
 @import "normalize";
 
+/* Variables */
+@import "components/variables";
+
 /* Layout rules */
 @import "layouts/responsive";
 
@@ -23,3 +26,196 @@
 /* SMACSS theme rules */
 /* @import "theme-A"; */
 /* @import "theme-B"; */
+
+/* Basics */
+body {
+  font-family: "Open Sans";
+  font-weight: "300";
+}
+
+a {
+  text-decoration: none;
+  color: #666666;
+  border-bottom: 1px solid #ededed;
+  &:hover {
+    border-bottom: 1px solid #666666;
+  }
+}
+
+h1,h2,h3,h4,h5,h6 {
+  font-weight: 600;
+}
+
+h1#page-title {
+  text-align: center;
+  margin-top: 80px;
+  color: $mainRed;
+  text-transform: uppercase;
+}
+
+h2.block-title {
+  color: $mainRed;
+  text-transform: uppercase;
+  font-size: 1.75em;
+}
+
+/* Header */
+#header {
+}
+
+/* Main Menu */
+#block-system-main-menu {
+  margin: 0;
+  margin-top: 70px;
+  float: right;
+  ul {
+    margin: 0;
+    padding: 0;
+    text-align: right;
+    li {
+      display: inline-block;
+      list-style: none;
+      margin-right: 20px;
+      &.last {
+        margin-right: 0;
+      }
+      a {
+        text-transform: uppercase;
+        font-weight: 600;
+        border: none;
+        color: $mainRed;
+        &:hover, &.active {
+          border-bottom: 3px solid $mainRed;
+        }
+      }
+    }
+  }
+}
+
+/* Highlighted Carrousel */
+#block-views-carrousel-block {
+  margin: 0;
+  margin-top: 30px;
+  padding: 0;
+  ul {
+    margin: 0;
+    padding: 0;
+    li {
+      list-style: none;
+    }
+  }
+}
+
+/* Homepage Blocks */
+.homeblocks {
+  margin-top: 20px;
+  ul {
+    margin: 0;
+    padding: 0;
+    li {
+      list-style: none;
+      float: left;
+      width: 545px;
+      border: 3px solid $mainRed;
+      position: relative;
+      margin-right: 38px;
+      margin-bottom: 38px;
+      &.even {
+        margin-right: 0;
+      }
+      a {
+        border: none;
+        img {
+          display: block;
+        }
+        .label {
+          position: absolute;
+          bottom: 20px;
+          right: 20px;
+          text-transform: uppercase;
+          color: black;
+          font-weight: 600;
+          font-size: 2.25em;
+        }
+      }
+    }
+  }
+}
+
+/* Main content */
+#main {
+  padding-top: 0;
+  #content {
+    padding: 0;
+  }
+}
+
+/* Content Center */
+#content-center {
+  background: #ededed;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  .inner {
+    max-width: 1140px;
+    margin-left: auto;
+    margin-right: auto;
+    .homepage-nieuws {
+      ul.items {
+        margin: 0;
+        padding: 0;
+        li.item {
+          width: 45%;
+          float: left;
+          list-style: none;
+          margin: 0;
+          padding: 0;
+          margin-right: 5%;
+          &.even {
+            margin-right: 0;
+          }
+          .title {
+            font-weight: 600;
+          }
+          .views-field-view-node {
+            a {
+              color: $mainRed;            
+              &:hover {
+                border-bottom: 1px solid $mainRed;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Footer */
+#content-bottom {
+  #footer {
+    color: $mainRed;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    p {
+      margin: 0;
+      margin-bottom: 10px;
+    }
+    a {
+      color: $mainRed;
+      border-bottom-color: $mainRedLight;
+      &:hover {
+        border-bottom-color: $mainRed;
+      }
+    }
+    .col {
+      $zen-column-count: 12;
+    }
+    .col1 {
+      @include zen-grid-item(6, 1);
+    }
+    .col2 {
+      @include zen-grid-item(6, 7);
+      text-align: right;
+    }
+  }
+}

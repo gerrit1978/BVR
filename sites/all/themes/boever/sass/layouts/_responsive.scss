@@ -30,11 +30,13 @@ $zen-auto-include-item-base: false;
  * For screen sizes larger than 1200px, prevent excessively long lines of text
  * by setting a max-width.
  */
+#header,
 #page,
-.region-bottom {
+.region-bottom,
+#footer {
   margin-left: auto;
   margin-right: auto;
-  max-width: 1200px;
+  max-width: 1140px;
 }
 
 /* Apply the shared properties of grid items in a single, efficient ruleset. */
@@ -42,8 +44,7 @@ $zen-auto-include-item-base: false;
 #content,
 #navigation,
 .region-sidebar-first,
-.region-sidebar-second,
-#footer {
+.region-sidebar-second {
   // See the note about $zen-auto-include-item-base above.
   @include zen-grid-item-base();
 }
