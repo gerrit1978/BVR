@@ -190,6 +190,23 @@ h2.block-title {
   }
 }
 
+/* Contact page */
+#content {
+	.col {
+	  $zen-column-count: 12;
+	}
+	.col1 {
+	  @include zen-grid-item(6,1);
+	}
+	.col2 {
+	  @include zen-grid-item(6,7);
+	  .map {
+	      border: 3px solid $mainRed;
+	      height: 450px;
+	  }
+	}
+}
+
 /* Footer */
 #content-bottom {
   #footer {
