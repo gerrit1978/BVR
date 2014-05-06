@@ -49,7 +49,8 @@ stylesheets[all][] = system.menus.css
 stylesheets[all][] = system.messages.css
 stylesheets[all][] = system.theme.css
 
-; Then we add our own stylesheet.
+; Then we add our own stylesheet and flexslider CSS
+stylesheets[all][] = flexslider/flexslider.css
 stylesheets[all][] = css/styles.css
 
 ; Built-in conditional stylesheet support has been removed from Zen 7.x-5.x.
@@ -65,8 +66,8 @@ stylesheets[all][] = css/styles.css
 
 
 ; Optionally add some JavaScripts to your theme.
-
-;scripts[] = js/script.js
+scripts[] = flexslider/jquery.flexslider.js
+scripts[] = js/script.js
 
 
 

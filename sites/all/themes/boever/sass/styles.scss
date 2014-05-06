@@ -104,15 +104,73 @@ p {
 }
 
 /* Highlighted Carrousel */
-#block-views-carrousel-block {
-  margin: 0;
+.view-carrousel {
   margin-top: 30px;
-  padding: 0;
-  ul {
+  position: relative;
+  ul.slides {
     margin: 0;
     padding: 0;
-    li {
+    height: 400px;
+    overflow: hidden;
+    li.slide {
       list-style: none;
+      margin: 0;
+      padding: 0;
+      height: 400px;
+      position: relative;
+      overflow: hidden;
+      .image {
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 10;
+        height: 400px;
+        width: 100%;
+        img {
+          min-width: 100%;
+          min-height: 400px;
+          display: block;
+        }
+      }
+      .text {
+        max-width: 1140px;
+        margin-left: auto;
+        margin-right: auto;
+        height: 400px;
+        position: relative;
+        z-index: 100;
+	      .title {
+	        text-align: center;
+	        position: absolute;
+	        top: 90px;
+	        width: 100%;
+	        color: $mainRed;
+	        text-shadow: 1px 1px 1px white;
+	        font-size: 3em;
+	        line-height: 1em;
+	        font-weight: 800;
+	        text-transform: uppercase;
+	      }
+	      .subtitle {
+	        text-align: center;
+	        position: absolute;
+	        bottom: 45px;
+	        width: 100%;
+	        font-size: 2em;
+	        line-height: 1.3;
+	        font-weight: 600;
+	        text-shadow: 1px 1px 1px black;
+	        color: white;
+	        a {
+	          color: white;
+	          border-bottom: 1px solid white;
+	          &:hover {
+	            color: $mainRed;
+	            border-bottom-color: $mainRed;
+	          }
+	        }
+	      }
+      }
     }
   }
 }
@@ -135,6 +193,9 @@ p {
       &.even {
         margin-right: 0;
       }
+      &:hover {
+        opacity: 0.8;
+      }
       a {
         border: none;
         img {
@@ -145,7 +206,7 @@ p {
           bottom: 20px;
           right: 20px;
           text-transform: uppercase;
-          color: black;
+          color: $mainRed;
           font-weight: 600;
           font-size: 2.25em;
         }
