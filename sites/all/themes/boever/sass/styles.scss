@@ -49,14 +49,25 @@ h1,h2,h3,h4,h5,h6 {
 h1#page-title {
   text-align: center;
   margin-top: 80px;
+  margin-bottom: 40px;
   color: $mainRed;
   text-transform: uppercase;
 }
 
-h2.block-title {
+h2, h3 {
   color: $mainRed;
   text-transform: uppercase;
   font-size: 1.75em;
+  line-height: 1.5;
+}
+
+h3 {
+  font-size: 1.25em;
+  line-height: 1.1;
+}
+
+p {
+  margin: 20px 0 10px 0;
 }
 
 /* Header */
@@ -109,6 +120,7 @@ h2.block-title {
 /* Homepage Blocks */
 .homeblocks {
   margin-top: 20px;
+  margin-bottom: 0;
   ul {
     margin: 0;
     padding: 0;
@@ -153,6 +165,7 @@ h2.block-title {
 /* Content Center */
 #content-center {
   background: #ededed;
+  margin-top: 30px;
   padding-top: 40px;
   padding-bottom: 40px;
   .inner {
@@ -187,6 +200,22 @@ h2.block-title {
         }
       }
     }
+    .klantenquotes {
+      margin: 0;
+      ul {
+        margin: 0;
+        padding: 0;
+        li {
+          padding: 5px 0 0 10px;
+          margin-bottom: 20px;
+          list-style: none;
+          background: url(../images/sprite.png) no-repeat left top;
+          &.last {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
   }
 }
 
@@ -205,6 +234,44 @@ h2.block-title {
 	      height: 450px;
 	  }
 	}
+}
+
+/* Contact form */
+.webform-client-form {
+  .webform-component {
+    clear: both;
+    padding-bottom: 20px;
+	  label {
+	    float: left;
+	    width: 33%;
+	    font-weight: 300;
+	    text-align: right;
+	    padding-right: 10px;
+	  }
+	  input.form-text, textarea {
+      float: left;
+      width: 66%;
+      border: 1px solid #aaaaaa;
+      background: #ededed;
+	  }
+	  input.form-text {
+	    height: 30px;
+	    line-height: 30px;
+	  }
+  }
+  #edit-actions {
+    clear: both;
+    padding-top: 20px;
+    .form-submit {
+      background: $mainRed;
+      float: right;
+      text-transform: uppercase;
+      color: white;
+      border: none;
+      padding: 4px 30px;
+      font-weight: 600;
+    }
+  }
 }
 
 /* Footer */
