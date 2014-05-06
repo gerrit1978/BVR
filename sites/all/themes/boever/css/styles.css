@@ -2116,7 +2116,7 @@ p {
 /* line 305, ../sass/styles.scss */
 .webform-client-form .webform-component label {
   float: left;
-  width: 33%;
+  width: 15%;
   font-weight: 300;
   text-align: right;
   padding-right: 10px;
@@ -2124,7 +2124,7 @@ p {
 /* line 312, ../sass/styles.scss */
 .webform-client-form .webform-component input.form-text, .webform-client-form .webform-component textarea {
   float: left;
-  width: 66%;
+  width: 84%;
   border: 1px solid #aaaaaa;
   background: #ededed;
 }
