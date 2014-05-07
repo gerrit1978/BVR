@@ -13,10 +13,19 @@ foreach ($result as $row) {
   $node = $row->_field_data['nid']['entity'];
   $ondertitel_field = field_get_items('node', $node, 'field_carrousel_ondertitel');
   $ondertitel = $ondertitel_field[0]['safe_value'];
-  $link_field = field_get_items('node', $node, 'field_carrousel_link');
-  if (isset($link_field[0]['nid'])) {
-    $link = url('node/' . $link_field[0]['nid'], array('absolute' => TRUE));
-    $ondertitel = l($ondertitel, $link);
+  $link_type_field = field_get_items('node', $node, 'field_carrousel_link_type');
+  if (isset($link_type_field[0])) {
+    $type = $link_type_field[0]['value'];
+    if ($type == 'external') {
+      $link_external_field = field_get_items('node', $node, 'field_carrousel_link_external');
+      $link_external = $link_external_field[0]['value'];
+      $ondertitel = "<a href='" . $link_external . "' target='_blank'>" . $ondertitel . "</a>";
+    }
+    if ($type == 'internal') {
+      $link_internal_field = field_get_items('node', $node, 'field_carrousel_link_internal');
+      $link = url('node/' . $link_internal_field[0]['nid'], array('absolute' => TRUE));
+      $ondertitel = l($ondertitel, $link);
+    }
   }
   $visual_field = field_get_items('node', $node, 'field_carrousel_visual');
   $visual_url = file_create_url($visual_field[0]['uri']);
