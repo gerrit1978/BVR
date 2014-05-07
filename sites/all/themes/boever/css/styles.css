@@ -2107,13 +2107,56 @@ p {
   height: 450px;
 }
 
-/* Contact form */
+/* Realisaties */
 /* line 302, ../sass/styles.scss */
+.view-realisaties ul.realisaties {
+  margin: 0;
+  padding: 0;
+}
+/* line 305, ../sass/styles.scss */
+.view-realisaties ul.realisaties li.realisatie {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  padding-bottom: 30px;
+  border-bottom: 1px solid #ededed;
+  margin-bottom: 30px;
+}
+/* line 312, ../sass/styles.scss */
+.view-realisaties ul.realisaties li.realisatie.last {
+  border-bottom: none;
+}
+/* line 316, ../sass/styles.scss */
+.view-realisaties ul.realisaties li.realisatie .node-realisatie h2.node-title {
+  font-weight: 300;
+  margin-bottom: 15px;
+}
+/* line 322, ../sass/styles.scss */
+.view-realisaties ul.realisaties li.realisatie .node-realisatie .field-name-field-realisatie-images .field-items .field-item {
+  float: left;
+  margin-right: 10px;
+}
+/* line 325, ../sass/styles.scss */
+.view-realisaties ul.realisaties li.realisatie .node-realisatie .field-name-field-realisatie-images .field-items .field-item a {
+  border: none;
+}
+/* line 327, ../sass/styles.scss */
+.view-realisaties ul.realisaties li.realisatie .node-realisatie .field-name-field-realisatie-images .field-items .field-item a img {
+  border: 2px solid #444444;
+}
+/* line 334, ../sass/styles.scss */
+.view-realisaties ul.realisaties li.realisatie .node-realisatie .field-name-body {
+  clear: both;
+  padding-top: 10px;
+}
+
+/* Contact form */
+/* line 345, ../sass/styles.scss */
 .webform-client-form .webform-component {
   clear: both;
   padding-bottom: 20px;
 }
-/* line 305, ../sass/styles.scss */
+/* line 348, ../sass/styles.scss */
 .webform-client-form .webform-component label {
   float: left;
   width: 15%;
@@ -2121,24 +2164,24 @@ p {
   text-align: right;
   padding-right: 10px;
 }
-/* line 312, ../sass/styles.scss */
+/* line 355, ../sass/styles.scss */
 .webform-client-form .webform-component input.form-text, .webform-client-form .webform-component textarea {
   float: left;
   width: 84%;
   border: 1px solid #aaaaaa;
   background: #ededed;
 }
-/* line 318, ../sass/styles.scss */
+/* line 361, ../sass/styles.scss */
 .webform-client-form .webform-component input.form-text {
   height: 30px;
   line-height: 30px;
 }
-/* line 323, ../sass/styles.scss */
+/* line 366, ../sass/styles.scss */
 .webform-client-form #edit-actions {
   clear: both;
   padding-top: 20px;
 }
-/* line 326, ../sass/styles.scss */
+/* line 369, ../sass/styles.scss */
 .webform-client-form #edit-actions .form-submit {
   background: #c1392b;
   float: right;
@@ -2150,34 +2193,34 @@ p {
 }
 
 /* Footer */
-/* line 340, ../sass/styles.scss */
+/* line 383, ../sass/styles.scss */
 #content-bottom #footer {
   color: #c1392b;
   padding-top: 20px;
   padding-bottom: 20px;
 }
-/* line 344, ../sass/styles.scss */
+/* line 387, ../sass/styles.scss */
 #content-bottom #footer p {
   margin: 0;
   margin-bottom: 10px;
 }
-/* line 348, ../sass/styles.scss */
+/* line 391, ../sass/styles.scss */
 #content-bottom #footer a {
   color: #c1392b;
   border-bottom-color: #f0d9d7;
 }
-/* line 351, ../sass/styles.scss */
+/* line 394, ../sass/styles.scss */
 #content-bottom #footer a:hover {
   border-bottom-color: #c1392b;
 }
-/* line 358, ../sass/styles.scss */
+/* line 401, ../sass/styles.scss */
 #content-bottom #footer .col1 {
   float: left;
   width: 50%;
   margin-left: 0%;
   margin-right: -50%;
 }
-/* line 361, ../sass/styles.scss */
+/* line 404, ../sass/styles.scss */
 #content-bottom #footer .col2 {
   float: left;
   width: 50%;
