@@ -314,19 +314,19 @@ sub vcl_recv {
   //   set req.http.X-Authcache-Get-Key = "skip";
   // }
 
-  /**
-   * Example 4: Trigger key-retrieval for all users, including anonymous.
-   *
-   * Forcing key-retrieval for users without a session enables caching even for
-   * requests with cookies. This may come in handy in one of the following
-   * situations:
-   * - A custom key generator is in place for anonymous users. E.g. to separate
-   *   cache bins according to language / region / device type.
-   * - The Authcache Debug widget is enabled for all users (including anonymous).
-   */
-  if (!req.http.X-Authcache-Get-Key) {
-    set req.http.X-Authcache-Get-Key = "get";
-  }
+  // /**
+  //  * Example 4: Trigger key-retrieval for all users, including anonymous.
+  //  *
+  //  * Forcing key-retrieval for users without a session enables caching even for
+  //  * requests with cookies. This may come in handy in one of the following
+  //  * situations:
+  //  * - A custom key generator is in place for anonymous users. E.g. to separate
+  //  *   cache bins according to language / region / device type.
+  //  * - The Authcache Debug widget is enabled for all users (including anonymous).
+  //  */
+  // if (!req.http.X-Authcache-Get-Key) {
+  //   set req.http.X-Authcache-Get-Key = "get";
+  // }
 
 
   /**
@@ -410,6 +410,23 @@ sub vcl_miss {
     set bereq.http.X-Authcache = 1;
   }
   /* END required authcache ESI header */
+
+  // /**
+  //  * Example 1: Use a passphrase to validate proxy requests.
+  //  *
+  //  * The standard Drupal way to verify whether a request came in via a proxy
+  //  * is to compare the X-Forwarded-For header to a whitelist. By default
+  //  * Authcache Varnish uses the same method. This fails however, if this
+  //  * check is carried out by the webserver (e.g., when using Nginx with the
+  //  * realip module).
+  //  *
+  //  * In that case, set a passphrase on the request and configure the same in
+  //  * settings.php, e.g.:
+  //  *
+  //  *    $conf['authcache_varnish_passphrase'] = 'correct horse battery staple';
+  //  *
+  //  */
+  // set bereq.http.X-Authcache-Varnish-Passphrase = "correct horse battery staple";
 }
 
 sub vcl_fetch {
@@ -523,9 +540,23 @@ sub vcl_deliver {
     set resp.http.Vary = regsub(resp.http.Vary, "^,\s*", "");
   }
 
+  // When checking whether it is possible to send a 304 instead of a full 200
+  // response, Varnish does not respect the cache-characteristics of embedded
+  // ESI fragments. In order to make this work it would be necessary to merge
+  // all Last-Modified and ETag response headers of all ESI fragments and
+  // generate a new value which is then delivered to the browser. Better 304
+  // support has been on the ESI wishlist for some time but it did not happen
+  // until now.
+  // @see https://www.varnish-cache.org/trac/wiki/Future_ESI
+  //
+  // Disable HTTP revalidation when a page contains ESI fragments.
+  if (resp.http.X-Authcache-Do-ESI) {
+    unset resp.http.ETag;
+    unset resp.http.Last-Modified;
+  }
+
   // Remove variables placed on backend response.
   unset resp.http.X-Authcache-Do-ESI;
-  unset resp.http.X-Authcache-Ban-Tag;
 
   /* END required authcache key-retrieval logic */
 

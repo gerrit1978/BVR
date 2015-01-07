@@ -1,4 +1,6 @@
-(function ($) {
+(function (Drupal, $) {
+  "use strict";
+
   Drupal.behaviors.authcacheNodeHistory = {
     attach: function (context, settings) {
       if (settings.authcacheNodeHistory) {
@@ -13,4 +15,5 @@
       }
     }
   };
-}(jQuery));
+
+}(Drupal, jQuery));

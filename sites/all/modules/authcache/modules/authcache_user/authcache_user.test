@@ -30,19 +30,14 @@ class AuthcacheUserTest extends DrupalWebTestCase {
     parent::setUp(array(
       'authcache_p13n_test',
       'authcache_user',
-      'comment',
       'contact',
     ));
 
     $this->member1 = $this->drupalCreateUser(array(
-      'access comments',
-      'post comments',
       'access user contact forms',
       'access site-wide contact form',
     ));
     $this->member2 = $this->drupalCreateUser(array(
-      'access comments',
-      'post comments',
       'access user contact forms',
       'access site-wide contact form',
     ));
@@ -136,30 +131,6 @@ class AuthcacheUserTest extends DrupalWebTestCase {
     $this->drupalGet('user/' . $this->member2->uid . '/contact');
     $this->assertNoText($this->member1->name);
     $this->assertNoText($this->member1->mail);
-    $this->assertText($setting_markup);
-    $this->assertStub($setting_stub, HookStub::once());
-  }
-
-  /**
-   * Ensure that user setting is embedded for authenticated users.
-   */
-  public function testCommentForm() {
-    $this->stubmod->hook('authcache_p13n_client', array(
-      'authcache_p13n_test' => array(
-        'title' => t('Test Client'),
-        'enabled' => TRUE,
-      ),
-    ));
-
-    $setting_markup = $this->randomName(8);
-    $setting_stub = HookStub::on('theme_authcache_p13n_setting__authcache_p13n_test', $setting_markup);
-
-    // Then ensure that the setting is added when the site wide contact form is
-    // accessed with authenticated user.
-    $this->drupalLogin($this->member1);
-    $this->drupalGet('comment/reply/' . $this->node->nid);
-    $this->assertNoText($this->member1->name, 'Should remove the users name from the comment form');
-
     $this->assertText($setting_markup);
     $this->assertStub($setting_stub, HookStub::once());
   }

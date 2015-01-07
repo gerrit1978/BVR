@@ -98,7 +98,6 @@ class AuthcacheP13nTestMarkup extends DrupalWebTestCase {
     $fragment_info = array(
       'menu-local-tabs' => array(
         'fragment' => 'AuthcacheMenuLocalTabsFragment',
-        'cache maxage' => ini_get('session.cookie_lifetime') ?: 0,
         'cache granularity' => AuthcacheP13nCacheGranularity::PER_USER | AuthcacheP13nCacheGranularity::PER_PAGE,
         'bootstrap phase' => DRUPAL_BOOTSTRAP_FULL,
       ),

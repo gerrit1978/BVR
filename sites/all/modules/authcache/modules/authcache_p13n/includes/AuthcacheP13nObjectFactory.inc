@@ -241,7 +241,7 @@ class AuthcacheP13nObjectFactory {
     // Necessary until #1272900 lands
     // @ignore style_function_spacing
     $result = array_filter($this->resources, function($definition) use ($collection_name) {
-      return isset($definition['#member_of']) && $definition['#member_of'] == $collection_name;
+      return isset($definition['#member_of']) && $definition['#member_of'] === $collection_name;
     });
     uasort($result, 'element_sort');
     return $result;

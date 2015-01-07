@@ -52,35 +52,31 @@ function authcache_user_form_alter(&$form, &$form_state, $form_id) {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
- *
- * Replace the username in the comment-form with a placeholder.
+ * Implements hook_preprocess_toolbar().
  */
-function authcache_user_form_comment_form_alter(&$form, &$form_state) {
-  global $user;
-
-  if ($user->uid && isset($form['author']['_author']) && !authcache_element_is_cacheable($form['author']['_author'])) {
+function authcache_user_preprocess_toolbar(&$variables) {
+  if (isset($variables['toolbar']['toolbar_user']['#links']['account']) && !authcache_element_is_cacheable($variables['toolbar']['toolbar_user'])) {
     $replacement = array(
       '#theme' => 'html_tag',
       '#tag' => 'span',
     );
     authcache_user_attach_property($replacement, 'name');
-    $form['author']['_author']['#markup'] = render($replacement);
-    authcache_element_set_cacheable($form['author']['_author']);
+    $variables['toolbar']['toolbar_user']['#links']['account']['title'] = t('Hello <strong>!username</strong>', array('!username' => render($replacement)));
+    authcache_element_set_cacheable($variables['toolbar']['toolbar_user']);
   }
 }
+
 
 /**
  * Attach setting loader for currently logged in user to the given element.
  */
-function authcache_user_attach_property(&$element, $property_name) {
-  $p13n_setting = array(
+function authcache_user_attach_property(&$target, $property_name) {
+  authcache_p13n_attach($target, array(
     '#setting' => 'user',
     '#attached' => array(
       'js' => array(drupal_get_path('module', 'authcache_user') . '/authcache_user.js'),
     ),
-  );
-  $element['#attached']['authcache_p13n_add_setting'][] = array($p13n_setting);
-  $element['#attributes']['class'][] = 'authcache-user';
-  $element['#attributes']['data-p13n-user-prop'] = $property_name;
+  ));
+  $target['#attributes']['class'][] = 'authcache-user';
+  $target['#attributes']['data-p13n-user-prop'] = $property_name;
 }

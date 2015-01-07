@@ -1,4 +1,6 @@
-(function ($) {
+(function (Drupal, $) {
+  "use strict";
+
   Drupal.behaviors.authcacheEsiDebug = {
     attach: function (context, settings) {
       if (settings.authcacheEsiDebug) {
@@ -6,4 +8,5 @@
       }
     }
   };
-}(jQuery));
+
+}(Drupal, jQuery));

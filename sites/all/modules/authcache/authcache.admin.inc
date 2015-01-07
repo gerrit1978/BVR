@@ -60,7 +60,7 @@ function authcache_admin_config($form, &$form_state) {
     '#type' => 'checkbox',
     '#title' => t("Don't cache Drupal Ajax requests"),
     '#default_value' => variable_get('authcache_noajax', 0),
-    '#description' => t("Disable caching of Ajax requests, such as autocomplete."),
+    '#description' => t('Note that most Ajax callbacks issued by Drupal core and contrib modules use POST requests. As a result they are not cacheable in the first place. A notable exception is the autocomplete callback.'),
   );
   $form['adv']['http200'] = array(
     '#type' => 'checkbox',
@@ -115,7 +115,7 @@ function authcache_admin_config_submit($form, &$form_state) {
   $cache_roles = drupal_map_assoc(array_filter($form_state['values']['authcache_roles']));
 
   // Figure out key lifetime.
-  if ($form_state['values']['key_lifetime'] == 'session') {
+  if ($form_state['values']['key_lifetime'] === 'session') {
     variable_del('authcache_key_lifetime');
   }
   else {

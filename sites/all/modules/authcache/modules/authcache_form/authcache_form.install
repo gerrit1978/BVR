@@ -20,7 +20,7 @@ function authcache_form_requirements($phase) {
     );
 
     $form_cache_class = get_class(_cache_get_object('cache_form'));
-    if ($form_cache_class == 'CacheObjectAPIWrapper') {
+    if ($form_cache_class === 'CacheObjectAPIWrapper') {
       $requirements['authcache_form']['value'] = $t('Using Cache Object API to extend validity of cached Ajax forms');
     }
     else {
@@ -37,9 +37,19 @@ function authcache_form_requirements($phase) {
  * Implements hook_uninstall().
  */
 function authcache_form_uninstall() {
+  variable_del('authcache_form_base_id_token');
   variable_del('authcache_form_cache_lifespan');
-  variable_del('authcache_form_cache_lifespan_custom');
   variable_del('authcache_form_notoken');
   variable_del('authcache_form_notoken_roles');
   variable_del('authcache_form_roles');
+}
+
+/**
+ * Update form cache lifespan variable.
+ */
+function authcache_form_update_7001() {
+  if (variable_get('authcache_form_cache_lifespan') === 'custom') {
+    variable_set('authcache_form_cache_lifespan', variable_get('authcache_form_cache_lifespan_custom'));
+  }
+  variable_del('authcache_form_cache_lifespan_custom');
 }

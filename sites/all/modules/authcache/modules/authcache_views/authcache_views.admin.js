@@ -1,4 +1,6 @@
-(function ($) {
+(function (Drupal, $) {
+  "use strict";
+
   Drupal.behaviors.authcacheViewsAdmin = {
     attach: function (context, settings) {
       if (Drupal.viewsUi) {
@@ -8,4 +10,5 @@
       }
     }
   };
-}(jQuery));
+
+}(Drupal, jQuery));

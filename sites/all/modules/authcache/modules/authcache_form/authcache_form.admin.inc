@@ -52,6 +52,31 @@ function authcache_form_admin($form, &$form_state) {
     '#members_only' => FALSE,
   );
 
+  // Form token derived from base form id.
+  $form['base_id_token'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Form token derived from base form id'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+
+  $module_info = system_get_info('module');
+  $modules_with_base_forms = array();
+  foreach (module_implements('forms') as $module) {
+    $modules_with_base_forms[] = $module_info[$module]['name'];
+  }
+  $form['base_id_token']['hint']['#markup'] = '<p>' . t('Some forms are repeated over and over across a site, each one with a slightly different form-id. A good example is the commerce add-to-cart form. Instead of deriving the CSRF token from the unique form-id, the base-form id can be used, such that only one token needs to be generated for all forms having a common base form.') . '</p>';
+  if (!empty($modules_with_base_forms)) {
+    $form['base_id_token']['hint']['#markup'] .= '<p>' . t('The following modules implement base forms and therefore might be affected by this feature:') . ' ' . implode(', ', $modules_with_base_forms) . '</p>';
+  }
+
+  $form['base_id_token']['authcache_form_base_id_token'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Base forms'),
+    '#description' => t('Supply a list of base form-ids where CSRF tokens should be derived from. Defaults to "*", i.e. applied to all base forms.'),
+    '#default_value' => variable_get('authcache_form_base_id_token', '*'),
+  );
+
   // Ajax forms.
   $cacheobject_disabled = !module_exists('cacheobject');
 
@@ -66,30 +91,12 @@ function authcache_form_admin($form, &$form_state) {
       '<p>' . t('In order to circumvent this problem you should install the <a href="!cacheobject_link">Cache Object API</a> module which allows the Authcache Forms module to extend that period to a user supplied value.', $links) . '</p>';
   }
 
-  $options = array(21600, 86400, 604800, 2592000);
-  $options = drupal_map_assoc($options, 'format_interval');
-  $options = array(-1 => t('Purge during cron runs')) + $options + array('custom' => t('Custom'));
   $form['formcache']['authcache_form_cache_lifespan'] = array(
-    '#type' => 'select',
+    '#type' => 'authcache_duration_select',
     '#title' => t('Form cache expiry'),
     '#description' => t('The maximum time a form-prototype for Ajax forms remains in the form cache.'),
-    '#options' => $options,
-    '#default_value' => variable_get('authcache_form_cache_lifespan', 604800),
-    '#disabled' => $p13n_disabled || $cacheobject_disabled,
-  );
-
-  $form['formcache']['authcache_form_cache_lifespan_custom'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Seconds'),
-    '#size' => '25',
-    '#maxlength' => '30',
-    '#description' => t('Ajax form cache expiry in seconds.'),
-    '#default_value' => variable_get('authcache_form_cache_lifespan_custom'),
-    '#states' => array(
-      'visible' => array(
-        ':input[name="authcache_form_cache_lifespan"]' => array('value' => 'custom'),
-      ),
-    ),
+    '#durations' => array(21600, 86400, 604800, 2592000),
+    '#default_value' => authcache_form_cache_lifespan(),
     '#disabled' => $p13n_disabled || $cacheobject_disabled,
   );
 

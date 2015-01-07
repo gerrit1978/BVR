@@ -1,4 +1,6 @@
-(function ($) {
+(function (Drupal, $) {
+  "use strict";
+
   // ESI assemblies
   Drupal.behaviors.authcacheEsiFragmentAssembly = {
     attach: function (context, settings) {
@@ -34,4 +36,5 @@
       }).remove();
     }
   };
-}(jQuery));
+
+}(Drupal, jQuery));

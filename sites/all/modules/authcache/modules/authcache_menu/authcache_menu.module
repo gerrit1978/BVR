@@ -15,7 +15,6 @@ function authcache_menu_authcache_p13n_fragment() {
       'fragment' => array(
         '#class' => 'AuthcacheMenuLocalTabsFragment',
       ),
-      'cache maxage' => ini_get('session.cookie_lifetime') ?: 0,
       'cache granularity' => AuthcacheP13nCacheGranularity::PER_USER | AuthcacheP13nCacheGranularity::PER_PAGE,
       'bootstrap phase' => DRUPAL_BOOTSTRAP_FULL,
     ),
@@ -25,7 +24,15 @@ function authcache_menu_authcache_p13n_fragment() {
       'fragment' => array(
         '#class' => 'AuthcacheMenuLocalActionsFragment',
       ),
-      'cache maxage' => ini_get('session.cookie_lifetime') ?: 0,
+      'cache granularity' => AuthcacheP13nCacheGranularity::PER_USER | AuthcacheP13nCacheGranularity::PER_PAGE,
+      'bootstrap phase' => DRUPAL_BOOTSTRAP_FULL,
+    ),
+    'menu-toolbar-shortcuts' => array(
+      'admin name' => t('Toolbar shortcuts'),
+      'admin group' => t('Menu'),
+      'fragment' => array(
+        '#class' => 'AuthcacheToolbarShortcutsFragment',
+      ),
       'cache granularity' => AuthcacheP13nCacheGranularity::PER_USER | AuthcacheP13nCacheGranularity::PER_PAGE,
       'bootstrap phase' => DRUPAL_BOOTSTRAP_FULL,
     ),
@@ -35,7 +42,6 @@ function authcache_menu_authcache_p13n_fragment() {
       'fragment' => array(
         '#class' => 'AuthcacheMenuItemTitleFragment',
       ),
-      'cache maxage' => ini_get('session.cookie_lifetime') ?: 0,
       'cache granularity' => AuthcacheP13nCacheGranularity::PER_USER,
       'bootstrap phase' => DRUPAL_BOOTSTRAP_FULL,
     ),
@@ -64,6 +70,22 @@ function authcache_menu_authcache_menu_invariant_access_callbacks() {
     'user_register_access',
     'search_is_active',
   );
+}
+
+/**
+ * Implements hook_preprocess_toolbar().
+ */
+function authcache_menu_preprocess_toolbar(&$variables) {
+  foreach (element_children($variables['toolbar']['toolbar_drawer']) as $key) {
+    if (isset($variables['toolbar']['toolbar_drawer'][$key]['shortcuts']) && function_exists('shortcut_set_switch_access') && shortcut_set_switch_access() && !authcache_element_is_cacheable($variables['toolbar']['toolbar_drawer'][$key]['shortcuts'])) {
+      authcache_p13n_attach($variables['toolbar']['toolbar_drawer'][$key]['shortcuts'], array(
+        '#theme' => 'authcache_p13n_fragment',
+        '#fragment' => 'menu-toolbar-shortcuts',
+        '#fallback' => 'cancel',
+      ));
+      authcache_element_set_cacheable($variables['toolbar']['toolbar_drawer'][$key]['shortcuts']);
+    }
+  }
 }
 
 /**

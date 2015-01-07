@@ -5,17 +5,18 @@
  */
 
 /**
- * Implements hook_authcache_p13n_assembly().
+ * Implements hook_authcache_p13n_setting().
  */
-function authcache_forum_authcache_p13n_assembly() {
+function authcache_forum_authcache_p13n_setting() {
   return array(
-    'forum-list' => array(
-      'admin name' => t('Forum list'),
+    'forum-num-new' => array(
+      'admin name' => t('Number of new forum topics'),
       'admin group' => t('Forum'),
-      'admin description' => t('Mark forums with new topics in forum list.'),
-      'fragment' => array(
-        '#partial' => 'new',
-        '#class' => 'AuthcacheForumListNewTopicsFragment',
+      'admin description' => t('Returns the number of new forum topics on the forum list'),
+      'setting' => array(
+        '#setting' => 'fn',
+        '#target' => 'authcacheForumNumNew',
+        '#class' => 'AuthcacheForumNumNewSetting',
       ),
       'cache maxage' => 600,
     ),
@@ -34,24 +35,29 @@ function authcache_forum_preprocess_forum_list(&$variables) {
   if ($user->uid && authcache_page_is_cacheable()) {
     foreach ($variables['forums'] as $forum) {
       // Remove personalized information from forum list.
+      $forum->new_topics = FALSE;
       $forum->new_text = '';
       $forum->new_url = '';
-      $forum->new_topics = '';
       $forum->icon_class = 'default';
       $forum->icon_title = t('No new posts');
       $forum->old_topics = $forum->num_topics;
 
       if ($forum->num_topics) {
-        $forum->num_topics .= '<br/>';
-        $forum->num_topics .= theme('authcache_p13n_partial', array(
-          'assembly' => 'forum-list',
-          'partial' => 'new',
-          'param' => $forum->tid,
+        $attribs = drupal_attributes(array(
+          'data-p13n-tid' => $forum->tid,
+          'class' => array(
+            'authcache-forum-num-new',
+          ),
         ));
+        $forum->num_topics .= '<br/><span ' . $attribs . '></span>';
+
+        authcache_p13n_add_setting(array(
+          '#setting' => 'forum-num-new',
+          '#param' => array('fn' => array($forum->tid)),
+        ));
+        drupal_add_js(drupal_get_path('module', 'authcache_forum') . '/authcache_forum.js');
       }
     }
-
-    drupal_add_js(drupal_get_path('module', 'authcache_forum') . '/authcache_forum.js');
   }
 }
 
@@ -82,24 +88,31 @@ function authcache_forum_preprocess_forum_icon(&$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  *
- * Remove number of new comments counter from topic and instead inject number of
- * new comments partial from the authcache comment module.
+ * Remove number of new comments counter from topic and instead inject reuse the
+ * p13n setting from Authcache Comment module.
  */
 function authcache_forum_preprocess_forum_topic_list(&$variables) {
   global $user;
 
   if ($user->uid && authcache_page_is_cacheable()) {
     foreach ($variables['topics'] as $topic) {
+      $topic->new_replies = FALSE;
+      $topic->new_text = '';
+      $topic->new_url = '';
+
       if ($topic->comment_count) {
-        $topic->comment_count .= '<br/>';
-        $topic->comment_count .= theme('authcache_p13n_partial', array(
-          'assembly' => 'comment-num-new',
-          'partial' => 'new',
-          'param' => $topic->nid,
-          'original' => $topic->new_text,
+        $attribs = drupal_attributes(array(
+          'data-p13n-nid' => $topic->nid,
+          'class' => array(
+            'authcache-forum-topic-num-new',
+          ),
         ));
-        $topic->new_text = '';
-        $topic->new_url = '';
+        $topic->comment_count .= '<br/><span ' . $attribs . '></span>';
+
+        authcache_p13n_add_setting(array(
+          '#setting' => 'comment-num-new',
+          '#param' => array('cn' => array($topic->nid)),
+        ));
 
         drupal_add_js(drupal_get_path('module', 'authcache_forum') . '/authcache_forum.js');
       }

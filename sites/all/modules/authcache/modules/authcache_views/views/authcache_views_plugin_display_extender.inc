@@ -30,7 +30,7 @@ class authcache_views_plugin_display_extender extends views_plugin_display_exten
    */
   public function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
-    if ($form_state['section'] == 'authcache') {
+    if ($form_state['section'] === 'authcache') {
       $form['#title'] .= t('Authcache settings');
 
       $defaults = $this->display->get_option('authcache');
@@ -48,7 +48,7 @@ class authcache_views_plugin_display_extender extends views_plugin_display_exten
    * Inserts the code into the view display.
    */
   public function options_submit(&$form, &$form_state) {
-    if ($form_state['section'] == 'authcache') {
+    if ($form_state['section'] === 'authcache') {
       $this->display->set_option('authcache', $form_state['values']['authcache']);
     }
   }

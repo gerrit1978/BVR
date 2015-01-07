@@ -397,11 +397,13 @@ class AuthcacheBuiltinTestCacheBackend extends DrupalWebTestCase {
    * Verify that the key cache is set with the proper values.
    */
   public function testKeyLoginLogout() {
+    global $base_root;
+
     variable_set('authcache_key_lifetime', 0);
 
     // Login and retrieve authcache key.
     $this->drupalLogin($this->member);
-    $current_session_id = $this->session_id;
+    $key_cache_cid = $base_root . ':' . $this->session_id;
     $this->drupalGet($this->fcURL . '?q=node', array(), $this->buildRequestHeaders(0x1));
 
     $user_key = $this->drupalGetHeader('X-Authcache-Builtin-Test-Key');
@@ -411,13 +413,13 @@ class AuthcacheBuiltinTestCacheBackend extends DrupalWebTestCase {
     // Issue a normal page request and ensure that the key cache was populated.
     $now = time();
     $this->drupalGet($this->fcURL . '?q=node', array(), $this->buildRequestHeaders(0x1));
-    $cache = cache_get($current_session_id, 'cache_authcache_key');
+    $cache = cache_get($key_cache_cid, 'cache_authcache_key');
     $this->assertEqual($user_key, $cache->data);
     $this->assertEqual(CACHE_TEMPORARY, $cache->expire);
 
     // Logout and ensure that the key is gone from the cache.
     $this->drupalGet($this->fcURL . '?q=user/logout', array(), $this->buildRequestHeaders(0x1));
-    $cache = cache_get($current_session_id, 'cache_authcache_key');
+    $cache = cache_get($key_cache_cid, 'cache_authcache_key');
     $this->assertFalse($cache);
   }
 
@@ -425,11 +427,13 @@ class AuthcacheBuiltinTestCacheBackend extends DrupalWebTestCase {
    * Verify that the key cache is set with the proper values.
    */
   public function testKeyExpiry() {
+    global $base_root;
+
     variable_set('authcache_key_lifetime', 3600);
 
     // Login and retrieve authcache key.
     $this->drupalLogin($this->member);
-    $current_session_id = $this->session_id;
+    $key_cache_cid = $base_root . ':' . $this->session_id;
 
     $user_key = $this->drupalGetHeader('X-Authcache-Builtin-Test-Key');
     $this->assertTrue($user_key, 'User key is not empty');
@@ -438,51 +442,51 @@ class AuthcacheBuiltinTestCacheBackend extends DrupalWebTestCase {
     // Issue a normal page request and ensure that the key cache was populated.
     $now = time();
     $this->drupalGet($this->fcURL . '?q=node', array(), $this->buildRequestHeaders(0x1));
-    $cache = cache_get($current_session_id, 'cache_authcache_key');
+    $cache = cache_get($key_cache_cid, 'cache_authcache_key');
     $this->assertEqual($user_key, $cache->data);
     $this->assertTrue($cache->expire >= $now - 3600 * 0.1);
     $this->assertTrue($cache->expire <= $now + 3600 * 1.1);
 
     // Logout and ensure that the key cache is empty.
     $this->drupalGet($this->fcURL . '?q=user/logout', array(), $this->buildRequestHeaders(0x1));
-    $cache = cache_get($current_session_id, 'cache_authcache_key');
+    $cache = cache_get($key_cache_cid, 'cache_authcache_key');
     $this->assertFalse($cache);
 
     // Login again with member and set cache expiry date into the past.
     $this->drupalLogin($this->member);
-    $current_session_id = $this->session_id;
-    cache_set($current_session_id, $user_key, 'cache_authcache_key', REQUEST_TIME - 3600);
+    $key_cache_cid = $base_root . ':' . $this->session_id;
+    cache_set($key_cache_cid, $user_key, 'cache_authcache_key', REQUEST_TIME - 3600);
 
     // Issue a normal page request and ensure that the cache has been renewed.
     $now = time();
     $this->drupalGet($this->fcURL . '?q=node', array(), $this->buildRequestHeaders(0x1));
-    $cache = cache_get($current_session_id, 'cache_authcache_key');
+    $cache = cache_get($key_cache_cid, 'cache_authcache_key');
     $this->assertEqual($user_key, $cache->data);
     $this->assertTrue($cache->expire >= $now - 3600 * 0.1);
     $this->assertTrue($cache->expire <= $now + 3600 * 1.1);
 
     // Logout and ensure that the key cache is empty.
     $this->drupalGet($this->fcURL . '?q=user/logout', array(), $this->buildRequestHeaders(0x1));
-    $cache = cache_get($current_session_id, 'cache_authcache_key');
+    $cache = cache_get($key_cache_cid, 'cache_authcache_key');
     $this->assertFalse($cache);
 
     // Login again with member and set a wrong authcache key but with proper
     // expiry date.
     $this->drupalLogin($this->member);
-    $current_session_id = $this->session_id;
-    cache_set($current_session_id, $this->randomName(4), 'cache_authcache_key', REQUEST_TIME + 3600);
+    $key_cache_cid = $base_root . ':' . $this->session_id;
+    cache_set($key_cache_cid, $this->randomName(4), 'cache_authcache_key', REQUEST_TIME + 3600);
 
     // Issue a normal page request and ensure that the cache has been renewed.
     $now = time();
     $this->drupalGet($this->fcURL . '?q=node', array(), $this->buildRequestHeaders(0x1));
-    $cache = cache_get($current_session_id, 'cache_authcache_key');
+    $cache = cache_get($key_cache_cid, 'cache_authcache_key');
     $this->assertEqual($user_key, $cache->data);
     $this->assertTrue($cache->expire >= $now - 3600 * 0.1);
     $this->assertTrue($cache->expire <= $now + 3600 * 1.1);
 
     // Logout and ensure that the key cache is empty.
     $this->drupalGet($this->fcURL . '?q=user/logout', array(), $this->buildRequestHeaders(0x1));
-    $cache = cache_get($current_session_id, 'cache_authcache_key');
+    $cache = cache_get($key_cache_cid, 'cache_authcache_key');
     $this->assertFalse($cache);
   }
 }

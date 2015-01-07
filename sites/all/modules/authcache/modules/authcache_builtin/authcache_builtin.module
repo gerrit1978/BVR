@@ -32,16 +32,18 @@ function authcache_builtin_authcache_backend_cache_save($body, $headers, $page_c
  * Implements hook_authcache_backend_key_set().
  */
 function authcache_builtin_authcache_backend_key_set($key, $lifetime, $has_session) {
+  global $base_root;
+
   // Clear out old key.
   $previous_session = authcache_backend_initial_session_id();
   if ($previous_session) {
-    cache_clear_all($previous_session, 'cache_authcache_key');
+    cache_clear_all($base_root . ':' . $previous_session, 'cache_authcache_key');
   }
 
   // Update cached key if necessary.
   if ($has_session && authcache_account_allows_caching()) {
     $expires = $lifetime ? REQUEST_TIME + $lifetime : CACHE_TEMPORARY;
-    cache_set(session_id(), $key, 'cache_authcache_key', $expires);
+    cache_set($base_root . ':' . session_id(), $key, 'cache_authcache_key', $expires);
   }
 }
 

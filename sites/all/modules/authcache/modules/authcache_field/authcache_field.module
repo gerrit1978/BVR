@@ -98,7 +98,7 @@ function authcache_field_field_attach_view_alter(&$output, $context) {
     $instance = field_info_instance($entity_type, $field_name, $bundle_name);
 
     if (!empty($instance['settings']['authcache']['status'])) {
-      if ($view_mode == '_custom') {
+      if ($view_mode === '_custom') {
         // Invoked from within field_view_field with a _custom display. Cannot
         // handle this atm.
         authcache_cancel(t('FIXME: authcache_field - what should we do with custom view_modes?'));

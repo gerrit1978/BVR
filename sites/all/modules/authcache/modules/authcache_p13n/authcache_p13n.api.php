@@ -41,13 +41,6 @@ function hook_authcache_p13n_fragment() {
       'fragment' => array(
         '#class' => 'AuthcacheFormTokenFragment',
       ),
-      'cache maxage' => ini_get('session.cookie_lifetime') ?: 0,
-    ),
-    'form-build-id' => array(
-      'fragment' => array(
-        '#class' => 'AuthcacheFormBuildIdFragment',
-      ),
-      'cache maxage' => 21600,
     ),
   );
 }
@@ -58,8 +51,8 @@ function hook_authcache_p13n_fragment() {
  * @see hook_authcache_p13n_fragment()
  */
 function hook_authcache_p13n_fragment_alter(&$info) {
-  // Extend the maximal age for the form-build-id fragment to one week.
-  $info['form-build-id']['cache maxage'] = 604800;
+  // Extend the maximal age for the form-token fragment to one week.
+  $info['form-token']['cache maxage'] = 604800;
 }
 
 /**
@@ -251,7 +244,7 @@ function hook_authcache_p13n_client_alter(&$info) {
  * @see authcache_p13n_client_get_preferred()
  */
 function hook_authcache_p13n_client_order_alter(&$clients, $type, $id, $param) {
-  if ($type == 'fragment' && $id == 'form') {
+  if ($type === 'fragment' && $id === 'form') {
     // Prefer esi over ajax for form-token retrieval.
     $clients['authcache_esi']['weight'] = -99;
     $clients['authcache_ajax']['weight'] = 0;

@@ -35,7 +35,7 @@ function authcache_builtin_requirements($phase) {
   else {
     $requirements['authcache_builtin']['value'] = $t('Either authcache.inc is missing or authcache_builtin.cache.inc is not the last entry in cache_backends variable.');
     $requirements['authcache_builtin']['description'] = $t('Your settings.php file must be modified to enable Authcache builtin cache backend. See <a href="@url">README.txt</a>.', array('@url' => base_path() . drupal_get_path('module', 'authcache_builtin') . '/README.txt'));
-    $requirements['authcache_builtin']['severity'] = ($phase == 'runtime') ? REQUIREMENT_ERROR : REQUIREMENT_WARNING;
+    $requirements['authcache_builtin']['severity'] = ($phase === 'runtime') ? REQUIREMENT_ERROR : REQUIREMENT_WARNING;
   }
 
   return $requirements;
@@ -56,5 +56,5 @@ function _authcache_builtin_backendstatus() {
   $last_in_backends = end($backends);
   $authcache_builtin_inc = drupal_get_path('module', 'authcache_builtin') . '/authcache_builtin.cache.inc';
   $authcache_main_inc = drupal_get_path('module', 'authcache') . '/authcache.cache.inc';
-  return $authcache_builtin_inc == $last_in_backends && in_array($authcache_main_inc, $backends);
+  return $authcache_builtin_inc === $last_in_backends && in_array($authcache_main_inc, $backends);
 }

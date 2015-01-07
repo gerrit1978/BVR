@@ -63,46 +63,62 @@ function authcache_esi_debug_status_table() {
   include_once DRUPAL_ROOT . '/includes/install.inc';
 
   $requirements = array();
-  $requirements['esi-request-header'] = array(
-    'title' => t('Request Header'),
-  );
-  if (empty($_SERVER['HTTP_X_AUTHCACHE_DO_ESI'])) {
-    $requirements['esi-request-header']['value'] = t('HTTP header %header is not on primary request.', array('%header' => 'X-Authcache-Do-ESI'));
-    $requirements['esi-request-header']['severity'] = REQUIREMENT_ERROR;
-    $requirements['esi-request-header']['description'] = t('Please make sure that the reverse proxy software (varnish) is configured according to the requirements of authcache_esi / authcache_varnish.');
+
+  if (authcache_account_allows_caching()) {
+    $requirements['esi-request-header'] = array(
+      'title' => t('Request Header'),
+    );
+    if (empty($_SERVER['HTTP_X_AUTHCACHE_DO_ESI'])) {
+      $requirements['esi-request-header']['value'] = t('HTTP header %header is not on primary request.', array('%header' => 'X-Authcache-Do-ESI'));
+      $requirements['esi-request-header']['severity'] = REQUIREMENT_ERROR;
+      $requirements['esi-request-header']['description'] = t('Please make sure that the reverse proxy software (varnish) is configured according to the requirements of authcache_esi / authcache_varnish.');
+    }
+    else {
+      $requirements['esi-request-header']['value'] = t('HTTP header %header is on primary request.', array('%header' => 'X-Authcache-Do-ESI'));
+      $requirements['esi-request-header']['severity'] = REQUIREMENT_OK;
+    }
+
+    $table = theme('status_report', array('requirements' => $requirements));
+    list($otag, $content, $ctag) = _authcache_esi_debug_split_table($table);
+    $output .= $otag . $content;
+
+    // Add ESI include tag: Shown when ESI request succeeds.
+    drupal_add_http_header('X-Authcache-Do-ESI', 1);
+    $attrs = array(
+      'src' => url('authcache-esi-debug-status/fragment'),
+    );
+    $output .= '<esi:include ' . drupal_attributes($attrs) . '/>';
+
+    // Add ESI remove tag: Shown when there is no ESI support.
+    $requirements = array();
+    $requirements['esi-tag'] = array(
+      'title' => t('ESI Tag'),
+      'value' => t('ESI tag not substituted.'),
+      'severity' => REQUIREMENT_ERROR,
+      'description' => t('Please make sure that the reverse proxy software (varnish) is configured according to the requirements of authcache_esi / authcache_varnish.'),
+    );
+    $table = theme('status_report', array('requirements' => $requirements));
+    list($otag, $content) = _authcache_esi_debug_split_table($table);
+    unset($otag);
+
+    $output .= '<esi:remove>';
+    $output .= $content;
+    $output .= '</esi:remove>';
+    $output .= $ctag;
   }
   else {
-    $requirements['esi-request-header']['value'] = t('HTTP header %header is on primary request.', array('%header' => 'X-Authcache-Do-ESI'));
-    $requirements['esi-request-header']['severity'] = REQUIREMENT_OK;
+    $requirements['account-excluded'] = array(
+      'title' => t('Authcache settings'),
+      'value' => t('Account not cacheable'),
+      'severity' => REQUIREMENT_WARNING,
+      'description' => t('The logged in user is excluded from authcache, therefore it is not possible to display meaningful information in this report.'),
+    );
+
+    $table = theme('status_report', array('requirements' => $requirements));
+    list($otag, $content, $ctag) = _authcache_esi_debug_split_table($table);
+    $output .= $otag . $content;
+
   }
-
-  $table = theme('status_report', array('requirements' => $requirements));
-  list($otag, $content, $ctag) = _authcache_esi_debug_split_table($table);
-  $output .= $otag . $content;
-
-  // Add ESI include tag: Shown when ESI request succeeds.
-  drupal_add_http_header('X-Authcache-Do-ESI', 1);
-  $attrs = array(
-    'src' => url('authcache-esi-debug-status/fragment'),
-  );
-  $output .= '<esi:include ' . drupal_attributes($attrs) . '/>';
-
-  // Add ESI remove tag: Shown when there is no ESI support.
-  $requirements = array();
-  $requirements['esi-tag'] = array(
-    'title' => t('ESI Tag'),
-    'value' => t('ESI tag not substituted.'),
-    'severity' => REQUIREMENT_ERROR,
-    'description' => t('Please make sure that the reverse proxy software (varnish) is configured according to the requirements of authcache_esi / authcache_varnish.'),
-  );
-  $table = theme('status_report', array('requirements' => $requirements));
-  list($otag, $content) = _authcache_esi_debug_split_table($table);
-  unset($otag);
-
-  $output .= '<esi:remove>';
-  $output .= $content;
-  $output .= '</esi:remove>';
-  $output .= $ctag;
 
   drupal_add_http_header('Cache-Control', 'public, max-age=10');
 

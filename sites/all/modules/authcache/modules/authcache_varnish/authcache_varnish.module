@@ -28,6 +28,12 @@ function authcache_varnish_boot() {
  * present. Otherwise return FALSE.
  */
 function authcache_varnish_request_validate() {
+  $passphrase = variable_get('authcache_varnish_passphrase');
+  if (isset($passphrase)) {
+    $passphrase_header = variable_get('authcache_varnish_passphrase_header', 'HTTP_X_AUTHCACHE_VARNISH_PASSPHRASE');
+    return (isset($_SERVER[$passphrase_header]) && $_SERVER[$passphrase_header] === $passphrase);
+  }
+
   if (variable_get('authcache_varnish_validate_reverse_proxy_address', TRUE)) {
     // Fail if reverse proxy is not configured in settings.php.
     if (!variable_get('reverse_proxy', 0)) {
@@ -126,7 +132,7 @@ function authcache_varnish_menu() {
  * Implements hook_authcache_request_exclude().
  */
 function authcache_varnish_authcache_request_exclude() {
-  if (arg(0) == 'authcache-varnish-get-key') {
+  if (arg(0) === 'authcache-varnish-get-key') {
     return t('Authcache varnish key callback');
   }
 }

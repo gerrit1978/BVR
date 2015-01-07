@@ -266,9 +266,13 @@ class AuthcacheVarnishTestDefaultValidation extends DrupalUnitTestCase {
     unset($_SERVER['HTTP_X_VARNISH']);
     unset($_SERVER['HTTP_X_FORWARDED_FOR']);
     unset($_SERVER['HTTP_X_CLUSTER_CLIENT_IP']);
+    unset($_SERVER['HTTP_X_AUTHCACHE_VARNISH_PASSPHRASE']);
+    unset($_SERVER['HTTP_X_CUSTOM_PASSPHRASE_HEADER']);
 
     $this->variableDel('authcache_varnish_validate_reverse_proxy_address');
     $this->variableDel('authcache_varnish_header');
+    $this->variableDel('authcache_varnish_passphrase');
+    $this->variableDel('authcache_varnish_passphrase_header');
   }
 
   /**
@@ -404,5 +408,51 @@ class AuthcacheVarnishTestDefaultValidation extends DrupalUnitTestCase {
     $this->assertIdentical(FALSE, authcache_varnish_request_validate(), 'Reject request when X-Forwarded-For is empty');
     $_SERVER['REMOTE_ADDR'] = $this->untrustedIp;
     $this->assertIdentical(FALSE, authcache_varnish_request_validate(), 'Reject request when X-Forwarded-For is empty');
+  }
+
+  /**
+   * Request has correct X-Authcache-Varnish-Passphrase.
+   */
+  public function testValidatePassphraseHeader() {
+    $this->variableSet('authcache_varnish_passphrase', 'sEcr3t!');
+
+    $_SERVER['REMOTE_ADDR'] = $this->proxyIp;
+    $_SERVER['HTTP_X_AUTHCACHE_VARNISH_PASSPHRASE'] = 'sEcr3t!';
+    $this->assertIdentical(TRUE, authcache_varnish_request_validate(), 'Accept request when proxy passphrase matches');
+
+    $_SERVER['REMOTE_ADDR'] = $this->untrustedIp;
+    $_SERVER['HTTP_X_AUTHCACHE_VARNISH_PASSPHRASE'] = 'sEcr3t!';
+    $this->assertIdentical(TRUE, authcache_varnish_request_validate(), 'Accept request when proxy passphrase matches, even from untrusted ip');
+  }
+
+  /**
+   * Request has correct custom passphrase header.
+   */
+  public function testValidateCustomPassphraseHeader() {
+    $this->variableSet('authcache_varnish_passphrase', 'sEcr3t!');
+    $this->variableSet('authcache_varnish_passphrase_header', 'HTTP_X_CUSTOM_PASSPHRASE_HEADER');
+
+    $_SERVER['REMOTE_ADDR'] = $this->proxyIp;
+    $_SERVER['HTTP_X_CUSTOM_PASSPHRASE_HEADER'] = 'sEcr3t!';
+    $this->assertIdentical(TRUE, authcache_varnish_request_validate(), 'Accept request when proxy passphrase matches');
+
+    $_SERVER['REMOTE_ADDR'] = $this->untrustedIp;
+    $_SERVER['HTTP_X_CUSTOM_PASSPHRASE_HEADER'] = 'sEcr3t!';
+    $this->assertIdentical(TRUE, authcache_varnish_request_validate(), 'Accept request when proxy passphrase matches, even from untrusted ip');
+  }
+
+  /**
+   * Request has the wrong X-Authcache-Varnish-Passphrase.
+   */
+  public function testRejectPassphraseIfNotIdentical() {
+    $this->variableSet('authcache_varnish_passphrase', 'sEcr3t!');
+
+    $_SERVER['REMOTE_ADDR'] = $this->proxyIp;
+    $_SERVER['HTTP_X_AUTHCACHE_VARNISH_PASSPHRASE'] = 'lEak3d!';
+    $this->assertIdentical(FALSE, authcache_varnish_request_validate(), 'Reject request when proxy passphrase does not match, even from trusted ip');
+
+    $_SERVER['REMOTE_ADDR'] = $this->untrustedIp;
+    $_SERVER['HTTP_X_AUTHCACHE_VARNISH_PASSPHRASE'] = 'lEak3d!';
+    $this->assertIdentical(FALSE, authcache_varnish_request_validate(), 'Reject request when proxy passphrase does not match');
   }
 }

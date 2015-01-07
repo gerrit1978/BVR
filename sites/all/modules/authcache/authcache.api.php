@@ -89,7 +89,7 @@ function hook_authcache_canceled($reason) {
  */
 function hook_authcache_preclude() {
   // After a POST, do not serve the next page request from cache.
-  if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     return t('POST request');
   }
 }
@@ -252,13 +252,13 @@ function hook_authcache_backend_cache_save($body, $headers, $page_compressed) {
  * Make the key available for subsequent request from the same client.
  */
 function hook_authcache_backend_key_set($key, $lifetime, $has_session) {
-  if ($previous_session && $previous_session != $current_session) {
+  if ($previous_session && $previous_session !== $current_session) {
     cache_clear_all($previous_session, 'cache_authcache_key');
   }
 
   // Update cached key if necessary.
   $cache = cache_get($current_session, 'cache_authcache_key');
-  if ($cache === FALSE || $cache->expire > 0 && $cache->expire < REQUEST_TIME || $cache->data != $current_key) {
+  if ($cache === FALSE || $cache->expire > 0 && $cache->expire < REQUEST_TIME || $cache->data !== $current_key) {
     $expires = $lifetime ? REQUEST_TIME + $lifetime : CACHE_TEMPORARY;
     cache_set($current_session, $key, 'cache_authcache_key', $expires);
   }

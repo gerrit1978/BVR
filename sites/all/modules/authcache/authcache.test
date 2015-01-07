@@ -21,7 +21,7 @@ class AuthcacheWebTestCase extends DrupalWebTestCase {
    */
   public function setUp() {
     parent::setUp('authcache', 'authcache_test', 'authcache_backend_test');
-    if ($this->profile != 'standard') {
+    if ($this->profile !== 'standard') {
       $this->drupalCreateContentType(array(
         'type' => 'page',
         'name' => 'Basic page',
@@ -1725,7 +1725,7 @@ class AuthcacheCookiesTestCase extends AuthcacheWebTestCase {
 
         foreach ($fields as $parampair) {
           $kv = explode('=', $parampair, 2);
-          $cookies[$name][$kv[0]] = (count($kv) == 2) ? $kv[1] : TRUE;
+          $cookies[$name][$kv[0]] = (count($kv) === 2) ? $kv[1] : TRUE;
         }
       }
     }

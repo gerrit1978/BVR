@@ -246,7 +246,7 @@ function authcache_backend_check_vary($set_vary_header = NULL) {
   }
 
   $hook_boot_headers = drupal_get_http_header();
-  if (isset($hook_boot_headers['vary']) && $hook_boot_headers['vary'] != $vary_header) {
+  if (isset($hook_boot_headers['vary']) && $hook_boot_headers['vary'] !== $vary_header) {
     return FALSE;
   }
   else {
@@ -275,7 +275,7 @@ function authcache_is_default_key($key) {
     return FALSE;
   }
 
-  return $key == $base_root;
+  return $key === $base_root;
 }
 
 /**

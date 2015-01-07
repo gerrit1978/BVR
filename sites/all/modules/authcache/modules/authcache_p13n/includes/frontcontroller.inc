@@ -53,7 +53,7 @@ function authcache_p13n_frontcontroller_handle_request($req) {
   try {
     // This frontcontroller is only capable of responding to GET and HEAD
     // requests.
-    if (!($_SERVER['REQUEST_METHOD'] == 'GET' || $_SERVER['REQUEST_METHOD'] == 'HEAD')) {
+    if (!($_SERVER['REQUEST_METHOD'] === 'GET' || $_SERVER['REQUEST_METHOD'] === 'HEAD')) {
       drupal_add_http_header('Allow', 'GET, HEAD');
       throw new AuthcacheP13nRequestException('405 Method Not Allowed');
     }
@@ -80,7 +80,7 @@ function authcache_p13n_frontcontroller_handle_request($req) {
 
     // Send response.
     $handler->handle($req);
-    if ($_SERVER['REQUEST_METHOD'] == 'HEAD') {
+    if ($_SERVER['REQUEST_METHOD'] === 'HEAD') {
       // Discard output if client does not care about it.
       ob_end_clean();
     }

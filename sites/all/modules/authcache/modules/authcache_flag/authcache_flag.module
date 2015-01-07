@@ -178,10 +178,10 @@ function _authcache_flag_extract_entity_from_build($build) {
   }
 
   // Some entities are naughty.
-  elseif ($build['#entity_type'] == 'user') {
+  elseif ($build['#entity_type'] === 'user') {
     return $build['#account'];
   }
-  elseif ($build['#entity_type'] == 'taxonomy_term') {
+  elseif ($build['#entity_type'] === 'taxonomy_term') {
     return $build['#term'];
   }
 

@@ -24,7 +24,7 @@ class AuthcachePageManagerPageTaskContextProvider extends AuthcachePageManagerDe
     $contexts = array();
     $args = array();
     foreach ($page_arguments as $count => $arg) {
-      if (is_object($arg) && get_class($arg) == 'ctools_context') {
+      if (is_object($arg) && get_class($arg) === 'ctools_context') {
         $contexts[$arg->id] = $arg;
         $args[] = $arg->original_argument;
       }
@@ -40,7 +40,7 @@ class AuthcachePageManagerPageTaskContextProvider extends AuthcachePageManagerDe
     if ($page->arguments) {
       foreach ($page->arguments as $name => $argument) {
         // Optional arguments must be converted to contexts too, if they exist.
-        if ($bits[$names[$name]][0] == '!') {
+        if ($bits[$names[$name]][0] === '!') {
           ctools_include('context');
           $argument['keyword'] = $name;
           if (isset($args[$count])) {

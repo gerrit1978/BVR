@@ -34,7 +34,7 @@ function authcache_backend_test_boot() {
  * Implements hook_ext().
  */
 function authcache_backend_test_exit() {
-  if (drupal_get_bootstrap_phase() == DRUPAL_BOOTSTRAP_FULL) {
+  if (drupal_get_bootstrap_phase() === DRUPAL_BOOTSTRAP_FULL) {
     drupal_add_http_header('X-Authcache-Backend-Test-Sess-Boot', authcache_backend_initial_session_id());
     drupal_add_http_header('X-Authcache-Backend-Test-Sess-Exit', empty($_SESSION) ? FALSE : session_id());
     drupal_add_http_header('X-Authcache-Backend-Test-Key-Boot', authcache_backend_initial_key());

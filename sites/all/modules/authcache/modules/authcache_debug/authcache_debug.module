@@ -137,7 +137,7 @@ function _authcache_debug_shutdown() {
  * Implements hook_authcache_debug_info().
  */
 function authcache_debug_authcache_debug_info() {
-  global $user, $_authcache_queries;
+  global $user;
 
   $info = array(
     'cacheTime' => REQUEST_TIME,
@@ -153,23 +153,6 @@ function authcache_debug_authcache_debug_info() {
 
   if (user_is_logged_in()) {
     $info['Key props'] = authcache_key_properties();
-  }
-
-  // Database benchmarks.
-  // TODO:D7 make this work.
-  if (isset($_authcache_queries) && variable_get('dev_query', 0)) {
-    $time_query = 0;
-    foreach ($_authcache_queries as $q) {
-      $time_query += $q[1];
-    }
-    // Convert seconds to milliseconds.
-    $time_query = round($time_query * 1000, 2);
-    $percent_query = round(($time_query / $info['pageRender']) * 100);
-
-    $info['page_queries'] = count($_authcache_queries) . " queries @ {$time_query} ms ({$percent_query}%)";
-  }
-  else {
-    unset($info['page_queries']);
   }
 
   return $info;
@@ -240,6 +223,15 @@ function _authcache_debug_watchdog_enabled() {
   }
 
   return $enabled;
+}
+
+/**
+ * Implements hook_authcache_request_exclude().
+ */
+function authcache_debug_authcache_request_exclude() {
+  if (arg(0) === 'authcache-debug' && arg(1) === 'ajax') {
+    return t('Caching disabled on authcache debug ajax callback.');
+  }
 }
 
 /**
@@ -324,7 +316,7 @@ function authcache_debug_info_ajax_get($data) {
   if (empty($data['cacheStatus'])) {
     $req_id = empty($_COOKIE['aucdbg']) ? '' : $_COOKIE['aucdbg'];
     $cache_req_id = $data['cacheReqId'];
-    $data['cacheStatus'] = ($req_id == $cache_req_id) ? 'MISS' : 'HIT';
+    $data['cacheStatus'] = ($req_id === $cache_req_id) ? 'MISS' : 'HIT';
   }
 
   drupal_add_http_header('Vary', 'Cookie');

@@ -7,12 +7,12 @@
 
 // Detect root directory of the Drupal installation.
 $__file__ = __FILE__;
-if ($__file__[0] != '/') {
+if ($__file__[0] !== '/') {
   $__file__ = str_replace(DIRECTORY_SEPARATOR, '/', $__file__);
 }
 $drupalroot = preg_replace('#(/(sites|profiles)/([^/]+))?/modules(/.*)?/authcache_p13n/frontcontroller/authcache.php$#', '', $__file__);
 
-if ($drupalroot == $__file__) {
+if ($drupalroot === $__file__) {
   trigger_error('Authcache P13n front controller: failed to locate Drupal root directory', E_USER_ERROR);
   exit();
 }
@@ -20,7 +20,9 @@ if ($drupalroot == $__file__) {
 // Relocate contents of $_SERVER variable to DRUPAL_ROOT by removing path
 // components pointing to the authcache front controller.
 $preg = '|' . preg_quote(substr($__file__, strlen($drupalroot) + 1), '|') . '|';
-$_SERVER = preg_replace($preg, 'authcache.php', $_SERVER);
+foreach ($_SERVER as $key => $value) {
+  $_SERVER[$key] = preg_replace($preg, 'authcache.php', $value);
+}
 
 // Change working directory and define the essential DRUPAL_ROOT constant.
 chdir($drupalroot);

@@ -9,13 +9,13 @@
  */
 function authcache_boost_module_implements_alter(&$implementations, $hook) {
   // No need for boosts init-hook, disable it.
-  if ($hook == 'init') {
+  if ($hook === 'init') {
     unset($implementations['boost']);
   }
 
   // No need for boosts exit-hook, disable it. We call it later from
   // authcache_boost_cache_save
-  if ($hook == 'exit') {
+  if ($hook === 'exit') {
     unset($implementations['boost']);
   }
 
@@ -24,7 +24,7 @@ function authcache_boost_module_implements_alter(&$implementations, $hook) {
   // see:
   // - boost_boost_is_cacheable().
   // - authcache_boost_is_cacheable().
-  if ($hook == 'boost_is_cacheable') {
+  if ($hook === 'boost_is_cacheable') {
     unset($implementations['boost']);
   }
 
@@ -32,7 +32,7 @@ function authcache_boost_module_implements_alter(&$implementations, $hook) {
   // see:
   // - boost_expire_cache().
   // - authcache_boost_expire_cache().
-  if ($hook == 'expire_cache') {
+  if ($hook === 'expire_cache') {
     unset($implementations['boost']);
   }
 }
@@ -126,7 +126,7 @@ function authcache_boost_cache_dirs() {
 
   // Authcache keys for anonymous users.
   $anonymous_keys = authcache_enum_anonymous_keys();
-  $anonymous_keys_customized = ($anonymous_keys != array($base_root));
+  $anonymous_keys_customized = ($anonymous_keys !== array($base_root));
 
   if (!$anonymous_keys_customized) {
     $cache_dirs[] = BOOST_NORMAL_DIR;
@@ -267,7 +267,7 @@ function authcache_boost_admin_htaccess_generate_htaccess() {
 
   // Authcache keys for anonymous users.
   $anonymous_keys = authcache_enum_anonymous_keys();
-  $anonymous_keys_customized = (authcache_enum_anonymous_keys() != array($base_root));
+  $anonymous_keys_customized = (authcache_enum_anonymous_keys() !== array($base_root));
 
   $skip_to_handler = count($authcache_keys) + count($anonymous_keys) + 1;
   $skip_to_end = $skip_to_handler + (!empty($gzip_count) ? $normal_count + $gzip_count + 1 : $normal_count);

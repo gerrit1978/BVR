@@ -39,7 +39,9 @@ function _authcache_builtin_cacheinc_default_nocache_get() {
  * Retrieve the authcache key for a session from the key-cache.
  */
 function _authcache_builtin_cacheinc_cache_key_get($session_id) {
-  $cache = cache_get($session_id, 'cache_authcache_key');
+  global $base_root;
+
+  $cache = cache_get($base_root . ':' . $session_id, 'cache_authcache_key');
 
   if ($cache === FALSE || $cache->expire > 0 && $cache->expire < REQUEST_TIME) {
     // Need a full bootstrap when key was not found or entry expired.
@@ -91,7 +93,7 @@ function authcache_builtin_cacheinc_retrieve_cache_page() {
   }
 
   // Only GET and HEAD requests allowed.
-  if (!($_SERVER['REQUEST_METHOD'] == 'GET' || $_SERVER['REQUEST_METHOD'] == 'HEAD')) {
+  if (!($_SERVER['REQUEST_METHOD'] === 'GET' || $_SERVER['REQUEST_METHOD'] === 'HEAD')) {
     return FALSE;
   }
 

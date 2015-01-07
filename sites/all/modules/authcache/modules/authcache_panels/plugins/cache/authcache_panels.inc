@@ -47,7 +47,7 @@ function authcache_panels_cache_clear_cache($display) {
  * Settings form.
  */
 function authcache_panels_cache_settings_form($conf, $display, $pid) {
-  if ($pid != 'display') {
+  if ($pid !== 'display') {
     if (!isset($conf['machine_name'])) {
       $conf['machine_name'] = authcache_panels_pane_machine_name_generate($display, $pid);
     }

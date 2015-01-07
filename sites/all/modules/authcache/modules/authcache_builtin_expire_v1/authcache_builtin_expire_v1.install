@@ -20,7 +20,7 @@ function authcache_builtin_expire_v1_requirements($phase) {
         '%option' => $t('Include base URL in expires'),
         '!link' => url('admin/config/development/performance/expire'),
       )),
-      'severity' => ($phase == 'runtime') ? REQUIREMENT_ERROR : REQUIREMENT_WARNING,
+      'severity' => ($phase === 'runtime') ? REQUIREMENT_ERROR : REQUIREMENT_WARNING,
     );
   }
 

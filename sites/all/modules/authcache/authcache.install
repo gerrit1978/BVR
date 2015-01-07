@@ -74,7 +74,7 @@ function authcache_requirements($phase) {
       'title' => $t('Authcache and Core Page Cache'),
       'value' => $t('Conflict with <a href="!link">Drupal core page caching</a>', array('!link' => url('admin/config/development/performance'))),
       'description' => $message,
-      'severity' => ($phase == 'runtime' ? REQUIREMENT_ERROR : REQUIREMENT_WARNING),
+      'severity' => ($phase === 'runtime' ? REQUIREMENT_ERROR : REQUIREMENT_WARNING),
     );
   }
 

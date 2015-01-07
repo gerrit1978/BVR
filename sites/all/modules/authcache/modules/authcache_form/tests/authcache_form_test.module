@@ -22,6 +22,12 @@ function authcache_form_test_menu() {
     'access callback' => TRUE,
   );
 
+  $item['authcache-form-test-multiple-forms'] = array(
+    'title' => 'Multiple forms',
+    'page callback' => 'authcache_form_test_page',
+    'access callback' => TRUE,
+  );
+
   return $item;
 }
 
@@ -33,6 +39,14 @@ function authcache_form_test_views_api() {
     'api' => 3,
   );
 }
+
+/**
+ * Implements hook_forms().
+ */
+function authcache_form_test_forms($form_id, $args) {
+  return HookStub::record(__FUNCTION__, func_get_args());
+}
+
 
 /**
  * Menu callback: Build a form.
@@ -47,6 +61,17 @@ function authcache_form_test_form($form, &$form_state) {
 function authcache_form_test_cached_form($form, &$form_state) {
   $form_state['cache'] = TRUE;
   return HookStub::record(__FUNCTION__, func_get_args()) + $form;
+}
+
+/**
+ * Menu callback: Show multiple forms on one page.
+ */
+function authcache_form_test_page() {
+  $build = array();
+  foreach (func_get_args() as $form_id) {
+    $build[$form_id] = drupal_get_form($form_id);
+  }
+  return $build;
 }
 
 /**

@@ -223,7 +223,7 @@ class HookStub {
    */
   public static function verify($hookname, $checkfunc, &$message) {
     if (($stub = variable_get('hookstub_' . $hookname))) {
-      if ($checkfunc == NULL) {
+      if (!isset($checkfunc)) {
         $checkfunc = HookStub::once();
       }
       return $checkfunc($stub->invocations, $message);
@@ -273,7 +273,7 @@ class HookStub {
         '@expected' => $times,
         '@actual' => count($invocations),
       ));
-      return count($invocations) == $times;
+      return count($invocations) === $times;
     };
   }
 
@@ -294,7 +294,7 @@ class HookStub {
         '@this' => var_export($args, TRUE),
         '@that' => var_export($invocations[$invoc], TRUE),
       ));
-      return $invocations[$invoc] == $args;
+      return $invocations[$invoc] === $args;
     };
   }
 }

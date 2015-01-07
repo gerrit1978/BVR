@@ -39,7 +39,7 @@ function authcache_panels_pane_fragment($pane) {
  * Implements hook_ctools_plugin_directory().
  */
 function authcache_panels_ctools_plugin_directory($module, $plugin) {
-  if ($module == 'panels') {
+  if ($module === 'panels') {
     return 'plugins/' . $plugin;
   }
 }
@@ -77,7 +77,7 @@ function authcache_panels_panels_display_save($display) {
  * Return options for the given pane.
  */
 function _authcache_panels_pane_get_options($pane) {
-  if (!empty($pane->cache) && $pane->cache['method'] == 'authcache_panels') {
+  if (!empty($pane->cache) && $pane->cache['method'] === 'authcache_panels') {
     $settings = array();
     if (!empty($pane->cache['settings']['authcache'])) {
       $settings = $pane->cache['settings']['authcache'];
@@ -92,7 +92,7 @@ function _authcache_panels_pane_get_options($pane) {
  * Return a fragment id for the given pane.
  */
 function authcache_panels_pane_fragment_id($pane) {
-  if (!empty($pane->cache) && $pane->cache['method'] == 'authcache_panels') {
+  if (!empty($pane->cache) && $pane->cache['method'] === 'authcache_panels') {
     return 'panels/' . str_replace('_', '-', $pane->cache['settings']['machine_name']);
   }
 

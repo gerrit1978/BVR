@@ -49,7 +49,7 @@ function authcache_poll_block_view_poll_recent_alter(&$data, $block) {
 function authcache_poll_node_view_alter(&$build) {
   $node = $build['#node'];
 
-  if ($node->type == 'poll' && authcache_page_is_cacheable()) {
+  if ($node->type === 'poll' && authcache_page_is_cacheable()) {
     if (isset($build['poll_view_voting'])) {
       authcache_p13n_attach($build['poll_view_voting'], array(
         '#theme' => 'authcache_p13n_fragment',
@@ -60,7 +60,7 @@ function authcache_poll_node_view_alter(&$build) {
     }
     if (isset($build['poll_view_results'])) {
       $router_item = menu_get_item();
-      $fragment = $router_item['page_callback'] == 'poll_results' ? 'poll-result' : 'poll-view';
+      $fragment = $router_item['page_callback'] === 'poll_results' ? 'poll-result' : 'poll-view';
       authcache_p13n_attach($build['poll_view_results'], array(
         '#theme' => 'authcache_p13n_fragment',
         '#fragment' => $fragment,

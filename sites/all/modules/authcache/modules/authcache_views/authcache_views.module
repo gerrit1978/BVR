@@ -41,7 +41,7 @@ function authcache_views_authcache_p13n_fragment() {
         // If this is a page-display and cache-granularity is set to per-page,
         // add a context provider for deriving views arguments from request
         // parameters.
-        if ($display->display_plugin == 'page' && $granularity & AuthcacheP13nCacheGranularity::PER_PAGE) {
+        if ($display->display_plugin === 'page' && $granularity & AuthcacheP13nCacheGranularity::PER_PAGE) {
           $fragments[$fragment_id]['views arguments'] = array(
             '#class' => 'AuthcacheViewsDisplayPageContextProvider',
             '#member_of' => 'context providers',

@@ -167,7 +167,7 @@ class AuthcacheP13nTestStubVerifyer {
         '@expected' => $expected,
         '@actual' => $actual,
       ));
-      return $expected == $actual;
+      return $expected === $actual;
     };
   }
 
@@ -184,7 +184,7 @@ class AuthcacheP13nTestStubVerifyer {
         '@this' => var_export($args, TRUE),
         '@that' => var_export($invocations[$invoc], TRUE),
       ));
-      return $invocations[$invoc] == $args;
+      return $invocations[$invoc] === $args;
     };
   }
 }
@@ -471,7 +471,7 @@ class AuthcacheP13nTestEchoFragmentAccess implements AuthcacheP13nFragmentAccess
    * {@inheritdoc}
    */
   public function check($account, $key, $subject, $context) {
-    return $key != 'account' || $subject == $account;
+    return $key !== 'account' || $subject == $account;
   }
 }
 
@@ -561,7 +561,7 @@ class AuthcacheP13nTestRequestRouterStub implements AuthcacheP13nRequestRouterIn
    * {@inheritdoc}
    */
   public function generateURL($route_id, $arg = NULL) {
-    if ($route_id == 'test/bad') {
+    if ($route_id === 'test/bad') {
       return FALSE;
     }
     else {
@@ -636,7 +636,7 @@ class AuthcacheP13nTestRequestUrlGeneratorStub implements AuthcacheP13nRequestUr
    * {@inheritdoc}
    */
   public function url($route_id, $arg = NULL) {
-    if ($route_id == 'test/bad') {
+    if ($route_id === 'test/bad') {
       return FALSE;
     }
     else {

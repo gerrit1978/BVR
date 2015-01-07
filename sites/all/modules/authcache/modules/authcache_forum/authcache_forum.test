@@ -276,13 +276,11 @@ class AuthcacheForumTest extends DrupalWebTestCase {
 
     // M1: Accesses the forum list. Normally a link '1 new' will be shown next
     // to the forum. However Authcache Forum will substitute the
-    // number-of-topics-with-new-comments link with a partial.
+    // number-of-topics-with-new-comments link with a placeholder.
     $this->drupalLogin($this->member1);
 
-    $assembly_markup = $this->randomName(8);
-    $assembly_stub = HookStub::on('theme_authcache_p13n_assembly__authcache_p13n_test', $assembly_markup);
-    $partial_markup = $this->randomName(8);
-    $partial_stub = HookStub::on('theme_authcache_p13n_partial__authcache_p13n_test', $partial_markup);
+    $setting_markup = $this->randomName(8);
+    $setting_stub = HookStub::on('theme_authcache_p13n_setting__authcache_p13n_test', $setting_markup);
 
     $this->drupalGet('forum');
 
@@ -291,35 +289,35 @@ class AuthcacheForumTest extends DrupalWebTestCase {
       ':icon' => 'icon',
       ':status' => 'forum-status-default',
     ));
-    $this->assertTrue($default_icons, 'Should display icons with default status');
+    $this->assertTrue($default_icons, 'Icons with default status present');
     $new_icons = $this->xpath('//div[contains(@class, :icon) and contains(@class, :status)]', array(
       ':icon' => 'icon',
       ':status' => 'forum-status-new',
     ));
-    $this->assertFalse($new_icons, 'Should not display icons with new-status');
-    $this->assertText($partial_markup, 'Should replace "1 new" link with partial markup');
-    $this->assertText($assembly_markup, 'Should inject markup for assembly');
-
-    $this->assertStub($assembly_stub, HookStub::once());
-    $this->assertStub($partial_stub, HookStub::once());
+    $this->assertFalse($new_icons, 'No icons with new-status present');
+    $this->assertText($setting_markup, 'Replace "1 new" link with a setting');
+    $this->assertStub($setting_stub, HookStub::once());
+    $this->assertIdentical(1, count($this->xpath('//span[@class=:class and @data-p13n-tid=:tid]', array(
+      ':class' => 'authcache-forum-num-new',
+      ':tid' => $this->forum['tid'],
+    ))), 'Replace "1 new" link with placeholder markup');
 
     // M1: Visit the topic in order to clear the new-comments marker.
     $this->drupalGet('node/' . $this->topic->nid);
 
     // M1: Repeat the test on the forum-list. Even though there are no new
-    // comments, the markup substitution must still take place.
-    $assembly_markup = $this->randomName(8);
-    $assembly_stub = HookStub::on('theme_authcache_p13n_assembly__authcache_p13n_test', $assembly_markup);
-    $partial_markup = $this->randomName(8);
-    $partial_stub = HookStub::on('theme_authcache_p13n_partial__authcache_p13n_test', $partial_markup);
+    // topics, the markup substitution must still take place.
+    $setting_markup = $this->randomName(8);
+    $setting_stub = HookStub::on('theme_authcache_p13n_setting__authcache_p13n_test', $setting_markup);
 
     $this->drupalGet('forum');
 
-    $this->assertText($partial_markup, 'Should replace "1 new" link with partial markup');
-    $this->assertText($assembly_markup, 'Should inject markup for assembly');
-
-    $this->assertStub($assembly_stub, HookStub::once());
-    $this->assertStub($partial_stub, HookStub::once());
+    $this->assertText($setting_markup, 'Render setting even though there is no new topic');
+    $this->assertStub($setting_stub, HookStub::once());
+    $this->assertIdentical(1, count($this->xpath('//span[@class=:class and @data-p13n-tid=:tid]', array(
+      ':class' => 'authcache-forum-num-new',
+      ':tid' => $this->forum['tid'],
+    ))), 'Generate placeholder markup even though there is no new topic');
   }
 
   /**
@@ -349,13 +347,11 @@ class AuthcacheForumTest extends DrupalWebTestCase {
 
     // M1: Accesses the topic list. Normally a link '1 new' will be shown next
     // to the topic. However Authcache Forum will substitute the
-    // number-of-new-comments link with a partial.
+    // number-of-new-comments link with a placeholder.
     $this->drupalLogin($this->member1);
 
-    $assembly_markup = $this->randomName(8);
-    $assembly_stub = HookStub::on('theme_authcache_p13n_assembly__authcache_p13n_test', $assembly_markup);
-    $partial_markup = $this->randomName(8);
-    $partial_stub = HookStub::on('theme_authcache_p13n_partial__authcache_p13n_test', $partial_markup);
+    $setting_markup = $this->randomName(8);
+    $setting_stub = HookStub::on('theme_authcache_p13n_setting__authcache_p13n_test', $setting_markup);
 
     $this->drupalGet('forum/' . $this->forum['tid']);
 
@@ -363,24 +359,23 @@ class AuthcacheForumTest extends DrupalWebTestCase {
     $default_icons = $this->xpath('//div[contains(@class, :class)]', array(
       ':class' => 'topic-status-default',
     ));
-    $this->assertTrue($default_icons, 'Should display icons with default status');
+    $this->assertTrue($default_icons, 'Icons with default status present');
     $new_icons = $this->xpath('//div[contains(@class, :class)]', array(
       ':class' => 'topic-status-new',
     ));
-    $this->assertFalse($new_icons, 'Should not display icons with new-status');
-    $this->assertText($partial_markup, 'Should replace "1 new" link with partial markup');
-    $this->assertText($assembly_markup, 'Should inject markup for assembly');
-
-    $this->assertStub($assembly_stub, HookStub::once());
-    $this->assertStub($partial_stub, HookStub::once());
+    $this->assertFalse($new_icons, 'No icons with new-status present');
+    $this->assertText($setting_markup, 'Replace "1 new" link with a setting');
+    $this->assertStub($setting_stub, HookStub::once());
+    $this->assertIdentical(1, count($this->xpath('//span[@class=:class and @data-p13n-nid=:nid]', array(
+      ':class' => 'authcache-forum-topic-num-new',
+      ':nid' => $this->topic->nid,
+    ))), 'Replace "1 new" link with placeholder markup');
 
     // M1: Access it again but with lower hot-threshold in order to ensure that
     // icon class still does not change.
     variable_set('forum_hot_topic', 0);
-    $assembly_markup = $this->randomName(8);
-    $assembly_stub = HookStub::on('theme_authcache_p13n_assembly__authcache_p13n_test', $assembly_markup);
-    $partial_markup = $this->randomName(8);
-    $partial_stub = HookStub::on('theme_authcache_p13n_partial__authcache_p13n_test', $partial_markup);
+    $setting_markup = $this->randomName(8);
+    $setting_stub = HookStub::on('theme_authcache_p13n_setting__authcache_p13n_test', $setting_markup);
 
     $this->drupalGet('forum/' . $this->forum['tid']);
 
@@ -388,16 +383,17 @@ class AuthcacheForumTest extends DrupalWebTestCase {
     $default_icons = $this->xpath('//div[contains(@class, :class)]', array(
       ':class' => 'topic-status-hot',
     ));
-    $this->assertTrue($default_icons, 'Should display icons with hot status');
+    $this->assertTrue($default_icons, 'Icons with hot status present');
     $new_icons = $this->xpath('//div[contains(@class, :class)]', array(
       ':class' => 'topic-status-hot-new',
     ));
-    $this->assertFalse($new_icons, 'Should not display icons with hot-new-status');
-    $this->assertText($partial_markup, 'Should replace "1 new" link with partial markup');
-    $this->assertText($assembly_markup, 'Should inject markup for assembly');
-
-    $this->assertStub($assembly_stub, HookStub::once());
-    $this->assertStub($partial_stub, HookStub::once());
+    $this->assertFalse($new_icons, 'No icons with hot-new-status present');
+    $this->assertText($setting_markup, 'Replace "1 new" link with a setting');
+    $this->assertStub($setting_stub, HookStub::once());
+    $this->assertIdentical(1, count($this->xpath('//span[@class=:class and @data-p13n-nid=:nid]', array(
+      ':class' => 'authcache-forum-topic-num-new',
+      ':nid' => $this->topic->nid,
+    ))), 'Replace "1 new" link with placeholder markup');
     variable_del('forum_hot_topic');
 
     // M1: Visit the topic in order to clear the new-comments marker.
@@ -405,18 +401,17 @@ class AuthcacheForumTest extends DrupalWebTestCase {
 
     // M1: Repeat the test on the forum-list. Even though there are no new
     // comments, the markup substitution must still take place.
-    $assembly_markup = $this->randomName(8);
-    $assembly_stub = HookStub::on('theme_authcache_p13n_assembly__authcache_p13n_test', $assembly_markup);
-    $partial_markup = $this->randomName(8);
-    $partial_stub = HookStub::on('theme_authcache_p13n_partial__authcache_p13n_test', $partial_markup);
+    $setting_markup = $this->randomName(8);
+    $setting_stub = HookStub::on('theme_authcache_p13n_setting__authcache_p13n_test', $setting_markup);
 
     $this->drupalGet('forum/' . $this->forum['tid']);
 
-    $this->assertText($partial_markup, 'Should replace "1 new" link with partial markup');
-    $this->assertText($assembly_markup, 'Should inject markup for assembly');
-
-    $this->assertStub($assembly_stub, HookStub::once());
-    $this->assertStub($partial_stub, HookStub::once());
+    $this->assertText($setting_markup, 'Render setting even though there is no new comment');
+    $this->assertStub($setting_stub, HookStub::once());
+    $this->assertIdentical(1, count($this->xpath('//span[@class=:class and @data-p13n-nid=:nid]', array(
+      ':class' => 'authcache-forum-topic-num-new',
+      ':nid' => $this->topic->nid,
+    ))), 'Generate placeholder markup even though there is no new comment');
   }
 
   /**
@@ -425,24 +420,24 @@ class AuthcacheForumTest extends DrupalWebTestCase {
    * Covers AuthcacheForumListNewTopicsFragment
    */
   public function testAuthcacheForumListNewTopicsFragment() {
-    // M1: Login and retrieve number-of-new-topics-assembly for forum list.
+    // M1: Login and retrieve number-of-new-topics-setting for forum list.
     $this->drupalLogin($this->member1);
 
-    $url = authcache_p13n_request_get_callback('asm/forum-list', array(
-      'new' => array($this->forum['tid']),
+    $url = authcache_p13n_request_get_callback('setting/forum-num-new', array(
+      'fn' => array($this->forum['tid']),
     ));
     $this->assertTrue($url);
 
     $result = $this->drupalGetAJAX($GLOBALS['base_root'] . $url['path'], $url['options'], array('X-Authcache: 1'));
-    $expect = array('new' => array($this->forum['tid'] => ''));
+    $expect = array('authcacheForumNumNew' => array());
     $this->assertEqual($expect, $result, 'Should not report any new topics, member1 is the owner of the topic');
 
-    // M2: Login and retrieve number-of-new-topics-assembly for forum list.
+    // M2: Login and retrieve number-of-new-topics-setting for forum list.
     $this->drupalLogin($this->member2);
     $result = $this->drupalGetAJAX($GLOBALS['base_root'] . $url['path'], $url['options'], array('X-Authcache: 1'));
     $expect = array(
-      'new' => array(
-        $this->forum['tid'] => '<span class="authcache-comment-new" data-new-count="1"></span>',
+      'authcacheForumNumNew' => array(
+        $this->forum['tid'] => 1,
       ),
     );
     $this->assertEqual($expect, $result, 'Should report one new topic for member2');

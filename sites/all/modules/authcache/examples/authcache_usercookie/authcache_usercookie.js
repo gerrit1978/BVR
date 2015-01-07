@@ -1,4 +1,6 @@
-(function ($) {
+(function (Drupal, $) {
+  "use strict";
+
   Drupal.behaviors.authcacheUsercookie = {
     attach: function (context, settings) {
       // Display logged-in username
@@ -12,4 +14,4 @@
       });
     }
   };
-}(jQuery));
+}(Drupal, jQuery));

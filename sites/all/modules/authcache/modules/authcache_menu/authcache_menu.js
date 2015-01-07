@@ -1,4 +1,8 @@
-(function ($) {
+(function (Drupal, $) {
+  "use strict";
+
+  var tabs_container, actions_container;
+
   function displayContainerIfNotEmpty(container) {
     if (!/\S/.test(container.text())) {
       container.hide();
@@ -8,18 +12,18 @@
     }
   }
 
-  var tabs_container, actions_container;
   Drupal.behaviors.authcacheMenuFragments = {
     attach: function (context, settings) {
-      if (tabs_container === undefined) {
+      if (typeof tabs_container === 'undefined') {
         tabs_container = $('.tabs');
       }
       displayContainerIfNotEmpty(tabs_container);
 
-      if (actions_container === undefined) {
+      if (typeof actions_container === 'undefined') {
         actions_container = $('.action-links');
       }
       displayContainerIfNotEmpty(actions_container);
     }
   };
-}(jQuery));
+
+}(Drupal, jQuery));

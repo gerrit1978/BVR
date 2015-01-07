@@ -354,12 +354,18 @@ function theme_authcache_p13n_partial($variables) {
 
 
 /**
- * Attach fragment to the target render element.
+ * Attach fragment or setting to the target render element.
  */
 function authcache_p13n_attach(&$target, $element) {
-  // Attach post render callback and replacement element.
-  $target['#post_render'][] = 'authcache_p13n_element_post_render';
-  $target['#authcache_p13n_element'] = $element;
+  if (!empty($element['#setting'])) {
+    // Attach a setting.
+    $target['#attached']['authcache_p13n_add_setting'][] = array($element);
+  }
+  else {
+    // Attach post render callback and replacement element.
+    $target['#post_render'][] = 'authcache_p13n_element_post_render';
+    $target['#authcache_p13n_element'] = $element;
+  }
 }
 
 
@@ -428,19 +434,29 @@ function authcache_p13n_get_assemblies() {
  * Implements hook_preprocess_html().
  */
 function authcache_p13n_preprocess_html(&$variables) {
+  $variables['page']['page_bottom']['#pre_render'][] = 'authcache_p13n_page_bottom_pre_render';
+}
+
+
+/**
+ * Pre-render callback for the page_bottom region.
+ */
+function authcache_p13n_page_bottom_pre_render($region) {
   foreach (authcache_p13n_get_settings() as $name => $element) {
-    $variables['page']['page_bottom']['authcache_setting'][$name] = array(
+    $region['authcache_setting'][$name] = array(
       '#theme' => 'authcache_p13n_setting',
     ) + $element;
   }
 
   foreach (authcache_p13n_get_assemblies() as $name => $params) {
-    $variables['page']['page_bottom']['authcache_assembly'][$name] = array(
+    $region['authcache_assembly'][$name] = array(
       '#theme' => 'authcache_p13n_assembly',
       '#assembly' => $name,
       '#param' => $params,
     );
   }
+
+  return $region;
 }
 
 
@@ -545,7 +561,7 @@ function authcache_p13n_session_invalidate($report_only = FALSE) {
  */
 function authcache_p13n_exit($destination = NULL) {
   // Invalidate session cache on post requests.
-  if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     authcache_p13n_session_invalidate();
   }
 

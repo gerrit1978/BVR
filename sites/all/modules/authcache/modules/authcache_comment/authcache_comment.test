@@ -86,7 +86,7 @@ class AuthcacheCommentTest extends DrupalWebTestCase {
    *
    * @see CommentHelperCase::postComment()
    */
-  protected function postComment($node, $comment, $subject = '', $contact = NULL) {
+  protected function postComment($node, $comment, $subject = '', $contact = NULL, $extra_post = NULL) {
     $langcode = LANGUAGE_NONE;
     $edit = array();
     $edit['comment_body[' . $langcode . '][0][value]'] = $comment;
@@ -113,19 +113,19 @@ class AuthcacheCommentTest extends DrupalWebTestCase {
       case DRUPAL_REQUIRED:
         // Preview required so no save button should be found.
         $this->assertNoFieldByName('op', t('Save'), 'Save button not found.');
-        $this->drupalPost(NULL, $edit, t('Preview'));
+        $this->drupalPost(NULL, $edit, t('Preview'), array(), array(), NULL, $extra_post);
         // Don't break here so that we can test post-preview field presence and
         // function below.
       case DRUPAL_OPTIONAL:
         $this->assertFieldByName('op', t('Preview'), 'Preview button found.');
         $this->assertFieldByName('op', t('Save'), 'Save button found.');
-        $this->drupalPost(NULL, $edit, t('Save'));
+        $this->drupalPost(NULL, $edit, t('Save'), array(), array(), NULL, $extra_post);
         break;
 
       case DRUPAL_DISABLED:
         $this->assertNoFieldByName('op', t('Preview'), 'Preview button not found.');
         $this->assertFieldByName('op', t('Save'), 'Save button found.');
-        $this->drupalPost(NULL, $edit, t('Save'));
+        $this->drupalPost(NULL, $edit, t('Save'), array(), array(), NULL, $extra_post);
         break;
     }
     $match = array();
@@ -161,7 +161,35 @@ class AuthcacheCommentTest extends DrupalWebTestCase {
   }
 
   /**
-   * Test that the number of new comments is replaced by a partial.
+   * Ensure that user setting is embedded for authenticated users.
+   */
+  public function testUserSettingInCommentForm() {
+    $this->stubmod->hook('authcache_p13n_client', array(
+      'authcache_p13n_test' => array(
+        'title' => t('Test Client'),
+        'enabled' => TRUE,
+      ),
+    ));
+
+    $setting_markup = $this->randomName(8);
+    $setting_stub = HookStub::on('theme_authcache_p13n_setting__authcache_p13n_test', $setting_markup);
+
+    // Then ensure that the setting is added when the site wide contact form is
+    // accessed with authenticated user.
+    $this->drupalLogin($this->member1);
+    $this->drupalGet('comment/reply/' . $this->node->nid);
+    $this->assertNoText($this->member1->name, 'Should remove the users name from the comment form');
+
+    $this->assertText($setting_markup);
+    $this->assertStub($setting_stub, HookStub::once());
+    $this->assertIdentical(1, count($this->xpath('//span[@class=:class and @data-p13n-user-prop=:prop]', array(
+      ':class' => 'authcache-user',
+      ':prop' => 'name',
+    ))), 'Generate placeholder markup for user property');
+  }
+
+  /**
+   * Test that the number of new comments is replaced by a placeholder.
    *
    * Covers authcache_comment_node_view_alter()
    */
@@ -178,16 +206,13 @@ class AuthcacheCommentTest extends DrupalWebTestCase {
     // M1: Visit the front page populated with one node having no comments.
     // Because there is no point in trying to figure out whether a node has new
     // comments, markup substitution for the new-comments fragment should not
-    // tagke place when there are no comments in the first place.
-    $assembly_markup = $this->randomName(8);
-    $assembly_stub = HookStub::on('theme_authcache_p13n_assembly__authcache_p13n_test', $assembly_markup);
-    $partial_markup = $this->randomName(8);
-    $partial_stub = HookStub::on('theme_authcache_p13n_partial__authcache_p13n_test', $partial_markup);
+    // take place when there are no comments in the first place.
+    $setting_markup = $this->randomName(8);
+    $setting_stub = HookStub::on('theme_authcache_p13n_setting__authcache_p13n_test', $setting_markup);
 
     $this->drupalGet('node');
 
-    $this->assertStub($assembly_stub, HookStub::never());
-    $this->assertStub($partial_stub, HookStub::never());
+    $this->assertStub($setting_stub, HookStub::never());
 
     // M1: Post a comment.
     $comment = $this->postComment($this->node, $this->randomName(8));
@@ -200,40 +225,38 @@ class AuthcacheCommentTest extends DrupalWebTestCase {
 
     // M1: Returns to the home page. Normally a link '1 new comment' will be
     // shown on a node posted to the front page. However Authcache Comment will
-    // substitute the number-of-new-comments link with a partial.
+    // substitute the number-of-new-comments link with a placeholder.
     $this->drupalLogin($this->member1);
 
-    $assembly_markup = $this->randomName(8);
-    $assembly_stub = HookStub::on('theme_authcache_p13n_assembly__authcache_p13n_test', $assembly_markup);
-    $partial_markup = $this->randomName(8);
-    $partial_stub = HookStub::on('theme_authcache_p13n_partial__authcache_p13n_test', $partial_markup);
+    $setting_markup = $this->randomName(8);
+    $setting_stub = HookStub::on('theme_authcache_p13n_setting__authcache_p13n_test', $setting_markup);
 
     $this->drupalGet('node');
 
     $this->assertNoText('1 new comment');
-    $this->assertText($partial_markup, 'Should replace "1 new comment" link with partial markup');
-    $this->assertText($assembly_markup, 'Should inject markup for assembly');
-
-    $this->assertStub($assembly_stub, HookStub::once());
-    $this->assertStub($partial_stub, HookStub::once());
+    $this->assertText($setting_markup, 'Replace "1 new comment" link with a setting');
+    $this->assertStub($setting_stub, HookStub::once());
+    $this->assertIdentical(1, count($this->xpath('//span[@class=:class and @data-p13n-nid=:nid]', array(
+      ':class' => 'authcache-comment-num-new',
+      ':nid' => $this->node->nid,
+    ))), 'Replace "1 new comment" link with placeholder markup');
 
     // M1: Visit the node in order to clear the new-comments marker.
     $this->drupalGet('node/' . $this->node->nid);
 
     // M1: Repeat the test on the front-page. Even though there are no new
     // comments, the markup substitution must still take place.
-    $assembly_markup = $this->randomName(8);
-    $assembly_stub = HookStub::on('theme_authcache_p13n_assembly__authcache_p13n_test', $assembly_markup);
-    $partial_markup = $this->randomName(8);
-    $partial_stub = HookStub::on('theme_authcache_p13n_partial__authcache_p13n_test', $partial_markup);
+    $setting_markup = $this->randomName(8);
+    $setting_stub = HookStub::on('theme_authcache_p13n_setting__authcache_p13n_test', $setting_markup);
 
     $this->drupalGet('node');
 
-    $this->assertText($partial_markup, 'Should replace "1 new comment" link with partial markup');
-    $this->assertText($assembly_markup, 'Should inject markup for assembly');
-
-    $this->assertStub($assembly_stub, HookStub::once());
-    $this->assertStub($partial_stub, HookStub::once());
+    $this->assertText($setting_markup, 'Render setting even though there is no new comment');
+    $this->assertStub($setting_stub, HookStub::once());
+    $this->assertIdentical(1, count($this->xpath('//span[@class=:class and @data-p13n-nid=:nid]', array(
+      ':class' => 'authcache-comment-num-new',
+      ':nid' => $this->node->nid,
+    ))), 'Generate placeholder markup even though there is no new comment');
   }
 
   /**
@@ -404,22 +427,18 @@ class AuthcacheCommentTest extends DrupalWebTestCase {
       ),
     ));
 
-    $assembly_markup = $this->randomName(8);
-    $assembly_stub = HookStub::on('theme_authcache_p13n_assembly__authcache_p13n_test', $assembly_markup);
-    $partial_markup = $this->randomName(8);
-    $partial_stub = HookStub::on('theme_authcache_p13n_partial__authcache_p13n_test', $partial_markup);
+    $setting_markup = $this->randomName(8);
+    $setting_stub = HookStub::on('theme_authcache_p13n_setting__authcache_p13n_test', $setting_markup);
 
     // Ensure that no markup substitution takes place for anonymous users on
     // front page.
     $this->drupalGet('node');
-    $this->assertStub($assembly_stub, HookStub::never());
-    $this->assertStub($partial_stub, HookStub::never());
+    $this->assertStub($setting_stub, HookStub::never());
 
     // Ensure that no markup substitution takes place for anonymous users on
     // node page.
     $this->drupalGet('node/' . $this->node->nid);
-    $this->assertStub($assembly_stub, HookStub::never());
-    $this->assertStub($partial_stub, HookStub::never());
+    $this->assertStub($setting_stub, HookStub::never());
   }
 
   /**
@@ -428,16 +447,16 @@ class AuthcacheCommentTest extends DrupalWebTestCase {
    * Covers AuthcacheCommentNumNewFragment
    */
   public function testNumberOfNewCommentsFragment() {
-    // M1: Login and retrieve num-new assembly for front-page.
+    // M1: Login and retrieve num-new setting for front-page.
     $this->drupalLogin($this->member1);
 
-    $url = authcache_p13n_request_get_callback('asm/comment-num-new', array(
-      'new' => array($this->node->nid),
+    $url = authcache_p13n_request_get_callback('setting/comment-num-new', array(
+      'cn' => array($this->node->nid),
     ));
     $this->assertTrue($url);
 
     $result = $this->drupalGetAJAX($GLOBALS['base_root'] . $url['path'], $url['options'], array('X-Authcache: 1'));
-    $expect = array('new' => array($this->node->nid => ''));
+    $expect = array('authcacheCommentNumNew' => array());
     $this->assertEqual($expect, $result, 'Should not report any new comments if there are none');
 
     // Simulate M1 visiting the node a minute ago.
@@ -455,10 +474,112 @@ class AuthcacheCommentTest extends DrupalWebTestCase {
     $this->drupalLogin($this->member1);
     $result = $this->drupalGetAJAX($GLOBALS['base_root'] . $url['path'], $url['options'], array('X-Authcache: 1'));
     $expect = array(
-      'new' => array(
-        $this->node->nid => '<span class="authcache-comment-new" data-new-count="1"></span>',
+      'authcacheCommentNumNew' => array(
+        $this->node->nid => 1,
       ),
     );
     $this->assertEqual($expect, $result, 'Should report one new comment for member one now');
+  }
+
+  /**
+   * Test that comments get properly attributed when the form cache is in use.
+   *
+   * Bug: https://www.drupal.org/node/2307555
+   */
+  public function testCommentAttributionWithFormCache() {
+    $this->stubmod->hook('authcache_p13n_client', array(
+      'authcache_p13n_test' => array(
+        'title' => t('Test Client'),
+        'enabled' => TRUE,
+      ),
+    ));
+
+    // Setup file field and cache object API.
+    module_enable(array('file', 'authcache_form', 'cacheobject'));
+    variable_set('cache_class_cache_form', 'CacheObjectAPIWrapper');
+    variable_set('cacheobject_class_cache_form', 'DrupalDatabaseCache');
+    $this->resetAll();
+
+    // Add a file-field to the comment entity. This will trigger the form cache
+    // because the file field widget uses Ajax.
+    $field = array(
+      'field_name' => 'field_document',
+      'type'  => 'file',
+      'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+    );
+    field_create_field($field);
+    $instance = array(
+      'field_name' => 'field_document',
+      'entity_type' => 'comment',
+      'label' => 'Document',
+      'bundle' => 'comment_node_article',
+      'settings' => array(
+        'file_directory' => 'field/document',
+        'file_extensions' => 'txt doc docx pdf ods odt xls xlsx',
+        'max_filesize' => '2MB',
+        'title_field' => '',
+      ),
+      'widget' => array(
+        'type' => 'file_generic',
+        'weight' => -4,
+      ),
+      'display' => array(
+        'default' => array(
+          'type' => 'file_default',
+          'weight' => 10,
+        ),
+        'teaser' => array(
+          'type' => 'file_default',
+          'weight' => 10,
+        ),
+      ),
+    );
+    field_create_instance($instance);
+
+    // Create a clone of member1 with the same set of roles.
+    $cloned_member1 = $this->drupalCreateUser();
+    $cloned_member1->roles = $this->member1->roles;
+    user_save($cloned_member1);
+
+    $this->drupalLogin($this->member1);
+
+    // M1: Visit the node in order to warm the form cache.
+    $excluded_stub = $this->stubmod->hook('authcache_excluded');
+    $canceled_stub = $this->stubmod->hook('authcache_canceled');
+    $this->drupalGet('node/' . $this->node->nid);
+    $this->assertStub($excluded_stub, HookStub::never());
+    $this->assertStub($canceled_stub, HookStub::never());
+
+    // Record the current page content and url.
+    $content = $this->drupalGetContent();
+    $url = $this->getUrl();
+
+    // M2: Post a comment.
+    $this->drupalLogin($cloned_member1);
+
+    // Simulate a cache-hit by restoring the content and url from member1.
+    $this->drupalSetContent($content, $url);
+
+    // Compute CSRF token and supply it via the extra_post parameter.
+    $token = $this->drupalGetToken('comment_form');
+    $extra_post = '&form_token=' . urlencode($token);
+
+    $this->postComment(NULL, $this->randomName(8), '', NULL, $extra_post);
+
+    // Ensure that we are not running into CSRF protection.
+    $this->assertNoText('The form has become outdated.');
+
+    // Ensure that the comment is attributed to the clone of member1.
+    $this->assertText($cloned_member1->name);
+    $this->assertNoText($this->member1->name);
+
+    $this->drupalLogout();
+  }
+
+  /**
+   * Overrides the defective method in the parent class.
+   */
+  protected function drupalGetToken($value = '') {
+    return drupal_hmac_base64($value, $this->session_id . drupal_get_private_key() . drupal_get_hash_salt());
   }
 }

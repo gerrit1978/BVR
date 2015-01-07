@@ -1,11 +1,13 @@
-(function ($) {
+(function (Drupal, $) {
+  "use strict";
+
   /**
    * Replace context nodes with given markup and call Drupal.detachBehaviors
    * and Drupal.attachBehaviors for old and new content respectively.
    */
   $.fn.authcacheP13nReplaceWith = function(markup) {
     return this.each(function() {
-      if ($.type(markup) == 'array') {
+      if ($.type(markup) === 'array') {
         markup = Drupal.theme.apply({}, markup);
       }
 
@@ -46,10 +48,10 @@
     $.each(settings || {}, function(selector) {
       $.each(this, function(fragment) {
         var group = this;
-        if ($.type(group) == 'array') {
-          newgroup = {};
+        if ($.type(group) === 'array') {
+          var newgroup = {};
           $.each(this, function(wrongkey) {
-            var realkey = group[wrongkey]['param'];
+            var realkey = group[wrongkey].param;
             newgroup[realkey] = group[wrongkey];
           });
           settings[selector][fragment] = newgroup;
@@ -81,4 +83,5 @@
       });
     }
   };
-}(jQuery));
+
+}(Drupal, jQuery));

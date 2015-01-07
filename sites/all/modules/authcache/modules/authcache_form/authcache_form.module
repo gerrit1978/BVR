@@ -34,7 +34,7 @@ function authcache_form_authcache_p13n_fragment() {
       'fragment' => array(
         '#class' => 'AuthcacheFormTokenFragment',
       ),
-      'cache maxage' => ini_get('session.cookie_lifetime') ?: 0,
+      'cache maxage' => authcache_form_cache_lifespan(),
     ),
   );
 }
@@ -43,11 +43,11 @@ function authcache_form_authcache_p13n_fragment() {
  * Implements hook_cacheobject_load().
  */
 function authcache_form_cacheobject_load($objects, $cids, $bin) {
-  if ($bin == 'cache_form') {
+  if ($bin === 'cache_form') {
     foreach ($objects as $object) {
       // Check the authcache key and restore the per-user cache_token.
       if (isset($object->data['#cache_token_authcache_key'])) {
-        if ($object->data['#cache_token_authcache_key'] == authcache_key()) {
+        if ($object->data['#cache_token_authcache_key'] === authcache_key()) {
           $object->data['#cache_token'] = drupal_get_token();
         }
       }
@@ -59,7 +59,7 @@ function authcache_form_cacheobject_load($objects, $cids, $bin) {
  * Implements hook_cacheobject_presave().
  */
 function authcache_form_cacheobject_presave($object, $cid, $bin) {
-  if ($bin == 'cache_form' && authcache_page_is_cacheable()) {
+  if ($bin === 'cache_form' && authcache_page_is_cacheable()) {
     // Remove the per-user #cache_token and replace it with the authcache key.
     // When the form is subsequently retrieved from the cache, the recorded key
     // is compared to the one of the logged in user. If they match the cache
@@ -74,12 +74,7 @@ function authcache_form_cacheobject_presave($object, $cid, $bin) {
     }
 
     // Extend the expiry period for cached forms.
-    $ttl = variable_get('authcache_form_cache_lifespan', 604800);
-    if ($ttl == 'custom') {
-      $ttl = variable_get('authcache_form_cache_lifespan_custom');
-    }
-
-    $object->expire = REQUEST_TIME + $ttl;
+    $object->expire = REQUEST_TIME + authcache_form_cache_lifespan();
   }
 }
 
@@ -87,23 +82,55 @@ function authcache_form_cacheobject_presave($object, $cid, $bin) {
  * Implements hook_form_alter().
  */
 function authcache_form_form_alter(&$form, &$form_state, $form_id) {
-  if (authcache_page_is_cacheable()) {
+  if (_authcache_form_allow_notoken($form_id)) {
+    // Removal of form token is allowed on this form. When removing form tokens
+    // we need to do that on both cacheable as well as uncacheable versions of
+    // the page. Otherwise form-processing will not work as soon as the form is
+    // submitted.
+    unset($form['#token']);
+    unset($form['form_token']);
+    authcache_element_set_cacheable($form);
+  }
+  elseif (authcache_page_is_cacheable()) {
     // Set the immutable flag on the form.
     $form_state['build_info']['immutable'] = TRUE;
 
-    if (_authcache_form_allow_notoken($form_id)) {
-      // Removal of form token is allowed on this form. When removing form
-      // tokens we need to do that on both cacheable as well as uncacheable
-      // versions of the page. Otherwise form-processing will not work as soon
-      // as the form is submitted.
-      unset($form['#token']);
-      unset($form['form_token']);
-      authcache_element_set_cacheable($form);
-    }
-    elseif (_authcache_form_allow_p13n($form_id)) {
+    if (_authcache_form_allow_p13n($form_id)) {
       $form['#after_build'][] = '_authcache_form_after_build';
     }
   }
+
+  // Use the base_form_id as the CSRF token value. This helps with reducing
+  // the number of tokens which need to be retrieved if one form is repeated
+  // over and over accross a site, e.g., the commerce add-to-cart form on a
+  // product listing. Note we need to do that on both cacheable as well as
+  // uncacheable versions of the page. Otherwise form-processing will not work
+  // as soon as the form is submitted.
+  if (isset($form['#token']) && isset($form_state['build_info']['base_form_id'])) {
+    $base_form_id = $form_state['build_info']['base_form_id'];
+    if (_authcache_form_allow_base_id_token($base_form_id)) {
+      $form['#token'] = $base_form_id;
+      if (!empty($form['form_token']['#default_value'])) {
+        // Just in case caching is canceled later on, ensure that the hidden
+        // token field has the correct token.
+        $form['form_token']['#default_value'] = drupal_get_token($form['#token']);
+      }
+    }
+  }
+}
+
+/**
+ * Returns the ttl for form-cache entries.
+ *
+ * @returns int
+ *   The number of seconds a form should be retained in the cache.
+ */
+function authcache_form_cache_lifespan() {
+  // The default ttl for form cache entries is hard-coded to 6 hours in
+  // form_set_cache(). Let's extend that to one week if Cache Object API is
+  // enabled.
+  $default = module_exists('cacheobject') ? 604800 : 21600;
+  return (int) variable_get('authcache_form_cache_lifespan', $default);
 }
 
 /**
@@ -169,6 +196,21 @@ function _authcache_form_allow_p13n($form_id, $account = NULL) {
  */
 function _authcache_form_allow_notoken($form_id, $account = NULL) {
   return authcache_role_restrict_members_access(variable_get('authcache_form_notoken_roles'), $account) && _authcache_form_match_form_id($form_id, variable_get('authcache_form_notoken', ''));
+}
+
+/**
+ * Test whether CSRF token based on base form id is allowed.
+ *
+ * @param string $base_form_id
+ *   The form id to test.
+ * @param object $account
+ *   The account to test.
+ *
+ * @return bool
+ *   TRUE if config allows tokens based on base form id, FALSE otherwise.
+ */
+function _authcache_form_allow_base_id_token($base_form_id, $account = NULL) {
+  return authcache_account_allows_caching($account) && _authcache_form_match_form_id($base_form_id, variable_get('authcache_form_base_id_token', '*'));
 }
 
 /**
