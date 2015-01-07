@@ -9,6 +9,10 @@
 ?>
 
   <header class="header clearfix" id="header" role="banner">
+
+    <?php if ($logo): ?>
+      <div class="logo"><a href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>" rel="home" class="header__logo" id="logo"><img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" class="header__logo-image" /></a></div>
+    <?php endif; ?>  
     <?php print render($page['header']); ?>
     <?php print render($page['navigation']); ?>
   </header>
