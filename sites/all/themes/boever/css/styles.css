@@ -1703,7 +1703,7 @@ tr.selected td {
 /* line 803, ../sass/components/_misc.scss */
 .progress .filled {
   background-color: #0072b9;
-  background-image: url('../images/progress.gif?1376896851');
+  background-image: url('../images/progress.gif?1420643892');
 }
 
 /**
@@ -1821,7 +1821,7 @@ h1, h2, h3, h4, h5, h6 {
 /* line 49, ../sass/styles.scss */
 h1#page-title {
   text-align: center;
-  margin-top: 80px;
+  margin-top: 40px;
   margin-bottom: 40px;
   color: #c3261f;
   text-transform: uppercase;
@@ -1856,7 +1856,7 @@ p {
 /* line 83, ../sass/styles.scss */
 #block-system-main-menu {
   margin: 0;
-  margin-top: 88px;
+  margin-top: 100px;
   float: right;
 }
 /* line 87, ../sass/styles.scss */
