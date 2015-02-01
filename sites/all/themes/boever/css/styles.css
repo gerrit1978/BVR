@@ -1703,7 +1703,11 @@ tr.selected td {
 /* line 803, ../sass/components/_misc.scss */
 .progress .filled {
   background-color: #0072b9;
+<<<<<<< HEAD
   background-image: url('../images/progress.gif?1420652433');
+=======
+  background-image: url('../images/progress.gif?1420643892');
+>>>>>>> fa4c289c93837b6aa14bbb09f7c661dbc9fdd972
 }
 
 /**
