@@ -856,6 +856,65 @@ table {
     margin-right: -100%;
   }
 }
+/**
+ * Smartphone
+ */
+@media all and (min-width: 319px) and (max-width: 1023px) {
+  /* line 219, ../sass/layouts/_responsive.scss */
+  #block-system-main-menu {
+    margin-top: 0 !important;
+    margin-bottom: 20px !important;
+  }
+
+  /* line 225, ../sass/layouts/_responsive.scss */
+  #carrousel ul.slides {
+    height: 150px !important;
+  }
+  /* line 227, ../sass/layouts/_responsive.scss */
+  #carrousel ul.slides li.slide {
+    height: 150px !important;
+  }
+  /* line 229, ../sass/layouts/_responsive.scss */
+  #carrousel ul.slides li.slide .image {
+    min-height: 150px !important;
+    height: 150px !important;
+  }
+  /* line 233, ../sass/layouts/_responsive.scss */
+  #carrousel ul.slides li.slide img {
+    height: auto !important;
+    min-height: 150px !important;
+  }
+
+  /* line 241, ../sass/layouts/_responsive.scss */
+  #page, #footer {
+    margin-left: 10px !important;
+    margin-right: 10px !important;
+  }
+
+  /* line 246, ../sass/layouts/_responsive.scss */
+  #content-center {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  /* line 252, ../sass/layouts/_responsive.scss */
+  .field-name-body .map {
+    display: none !important;
+  }
+
+  /* line 257, ../sass/layouts/_responsive.scss */
+  #content .col, #footer .col {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
+  }
+
+  /* line 266, ../sass/layouts/_responsive.scss */
+  #block-views-nieuws-block ul.items li.item {
+    width: 100% !important;
+  }
+}
 /* Component (SMACSS module) rules */
 /**
  * @file
@@ -1703,11 +1762,7 @@ tr.selected td {
 /* line 803, ../sass/components/_misc.scss */
 .progress .filled {
   background-color: #0072b9;
-<<<<<<< HEAD
   background-image: url('../images/progress.gif?1420652433');
-=======
-  background-image: url('../images/progress.gif?1420643892');
->>>>>>> fa4c289c93837b6aa14bbb09f7c661dbc9fdd972
 }
 
 /**

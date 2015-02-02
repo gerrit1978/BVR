@@ -128,7 +128,7 @@ $zen-auto-include-item-base: false;
     /* Start a new row and span all 3 columns. */
     .region-sidebar-second {
       @include zen-grid-item(3, 1);
-      @include zen-nested-container(); // Since we're making every block in this region be a grid item.
+      @include zen-nested-container(); // Since were making every block in this region be a grid item.
       @include zen-clear();
 
       /* Apply the shared properties of grid items in a single, efficient ruleset. */
@@ -208,4 +208,65 @@ $zen-auto-include-item-base: false;
       @include zen-grid-item(1, 5);
     }
   }
+}
+
+
+/**
+ * Smartphone
+ */
+@media all and (min-width: 319px) and (max-width: 1023px) {
+
+  #block-system-main-menu {
+    margin-top: 0 !important;
+    margin-bottom: 20px !important;
+  }
+  
+  #carrousel {
+    ul.slides {
+      height: 150px !important;
+      li.slide {
+        height: 150px !important;
+        .image {
+          min-height: 150px !important;
+          height: 150px !important;
+        }
+        img {
+          height: auto !important;
+          min-height: 150px !important;
+        }
+      }
+    }
+  }
+  
+  #page, #footer {
+    margin-left: 10px !important;
+    margin-right: 10px !important;
+  }
+  
+  #content-center {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+  
+  .field-name-body {
+    .map {
+      display: none !important;
+    }
+  }
+  
+  #content .col, #footer .col {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
+  }
+  
+  #block-views-nieuws-block {
+    ul.items {
+      li.item {
+        width: 100% !important;
+      }
+    }
+  }
+
 }
