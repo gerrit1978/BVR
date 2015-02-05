@@ -1,11 +1,11 @@
 /*
 Syntax error: Undefined variable: "$mainRed".
-        on line 298 of /Applications/AMPPS/www/hedgecomm/boever.local/sites/all/themes/boever/sass/layouts/_responsive.scss
+        on line 302 of /Applications/AMPPS/www/hedgecomm/boever.local/sites/all/themes/boever/sass/layouts/_responsive.scss
         from line 10 of /Applications/AMPPS/www/hedgecomm/boever.local/sites/all/themes/boever/sass/layouts/_responsive-rtl.scss
         from line 13 of /Applications/AMPPS/www/hedgecomm/boever.local/sites/all/themes/boever/sass/styles-rtl.scss
 
 Backtrace:
-/Applications/AMPPS/www/hedgecomm/boever.local/sites/all/themes/boever/sass/layouts/_responsive.scss:298
+/Applications/AMPPS/www/hedgecomm/boever.local/sites/all/themes/boever/sass/layouts/_responsive.scss:302
 /Applications/AMPPS/www/hedgecomm/boever.local/sites/all/themes/boever/sass/layouts/_responsive-rtl.scss:10
 /Applications/AMPPS/www/hedgecomm/boever.local/sites/all/themes/boever/sass/styles-rtl.scss:13
 /Library/Ruby/Gems/2.0.0/gems/sass-3.2.14/lib/sass/script/variable.rb:49:in `_perform'
@@ -128,4 +128,4 @@ Backtrace:
 body:before {
   white-space: pre;
   font-family: monospace;
-  content: "Syntax error: Undefined variable: \"$mainRed\".\A         on line 298 of /Applications/AMPPS/www/hedgecomm/boever.local/sites/all/themes/boever/sass/layouts/_responsive.scss\A         from line 10 of /Applications/AMPPS/www/hedgecomm/boever.local/sites/all/themes/boever/sass/layouts/_responsive-rtl.scss\A         from line 13 of /Applications/AMPPS/www/hedgecomm/boever.local/sites/all/themes/boever/sass/styles-rtl.scss"; }
+  content: "Syntax error: Undefined variable: \"$mainRed\".\A         on line 302 of /Applications/AMPPS/www/hedgecomm/boever.local/sites/all/themes/boever/sass/layouts/_responsive.scss\A         from line 10 of /Applications/AMPPS/www/hedgecomm/boever.local/sites/all/themes/boever/sass/layouts/_responsive-rtl.scss\A         from line 13 of /Applications/AMPPS/www/hedgecomm/boever.local/sites/all/themes/boever/sass/styles-rtl.scss"; }

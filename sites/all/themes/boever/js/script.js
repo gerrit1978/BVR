@@ -23,4 +23,15 @@ Drupal.behaviors.carrousel = {
 }
 
 
+Drupal.behaviors.responsive = {
+  attach: function(context, settings) {
+    $('#block-system-main-menu ul li a#menu-responsive').click(function(e) {
+      $(this).parent().parent().parent().find('li').toggle();
+      $(this).parent().show();
+      e.preventDefault();
+      return false;
+    });
+  }
+}
+
 })(jQuery, Drupal, this, this.document);

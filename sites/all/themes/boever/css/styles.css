@@ -914,45 +914,50 @@ table {
   #block-views-nieuws-block ul.items li.item {
     width: 100% !important;
   }
+
+  /* line 272, ../sass/layouts/_responsive.scss */
+  h1#page-title {
+    margin: 15px 0 !important;
+  }
 }
 /**
  * Responsive menu on wide screens
  */
 @media all and (min-width: 1054px) {
-  /* line 279, ../sass/layouts/_responsive.scss */
+  /* line 283, ../sass/layouts/_responsive.scss */
   #block-system-main-menu {
     margin: 0;
     margin-top: 100px;
     float: right;
   }
-  /* line 283, ../sass/layouts/_responsive.scss */
+  /* line 287, ../sass/layouts/_responsive.scss */
   #block-system-main-menu ul {
     margin: 0;
     padding: 0;
     text-align: right;
   }
-  /* line 287, ../sass/layouts/_responsive.scss */
+  /* line 291, ../sass/layouts/_responsive.scss */
   #block-system-main-menu ul li {
     display: inline-block;
     list-style: none;
     margin-right: 20px;
   }
-  /* line 291, ../sass/layouts/_responsive.scss */
+  /* line 295, ../sass/layouts/_responsive.scss */
   #block-system-main-menu ul li.last {
     margin-right: 0;
   }
-  /* line 294, ../sass/layouts/_responsive.scss */
+  /* line 298, ../sass/layouts/_responsive.scss */
   #block-system-main-menu ul li a {
     text-transform: uppercase;
     font-weight: 600;
     border: none;
     color: #c3261f;
   }
-  /* line 299, ../sass/layouts/_responsive.scss */
+  /* line 303, ../sass/layouts/_responsive.scss */
   #block-system-main-menu ul li a:hover, #block-system-main-menu ul li a.active {
     border-bottom: 3px solid #c3261f;
   }
-  /* line 302, ../sass/layouts/_responsive.scss */
+  /* line 306, ../sass/layouts/_responsive.scss */
   #block-system-main-menu ul li a#menu-responsive {
     display: none;
   }
@@ -961,9 +966,31 @@ table {
  * Responsive menu on small screens
  */
 @media all and (max-width: 1053px) {
-  /* line 316, ../sass/layouts/_responsive.scss */
+  /* line 320, ../sass/layouts/_responsive.scss */
   #block-system-main-menu {
     clear: both;
+  }
+  /* line 322, ../sass/layouts/_responsive.scss */
+  #block-system-main-menu ul.menu {
+    padding: 0;
+  }
+  /* line 324, ../sass/layouts/_responsive.scss */
+  #block-system-main-menu ul.menu li {
+    display: none;
+  }
+  /* line 326, ../sass/layouts/_responsive.scss */
+  #block-system-main-menu ul.menu li a {
+    height: 30px;
+  }
+  /* line 328, ../sass/layouts/_responsive.scss */
+  #block-system-main-menu ul.menu li a#menu-responsive {
+    display: block;
+    border: 0;
+    background: url(../images/sprite.png) no-repeat right -165px;
+  }
+  /* line 334, ../sass/layouts/_responsive.scss */
+  #block-system-main-menu ul.menu li.first {
+    display: block;
   }
 }
 /* Component (SMACSS module) rules */

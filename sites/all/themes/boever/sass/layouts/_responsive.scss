@@ -268,6 +268,10 @@ $zen-auto-include-item-base: false;
       }
     }
   }
+  
+  h1#page-title {
+    margin: 15px 0 !important;
+  }
 
 }
 
@@ -315,5 +319,22 @@ $zen-auto-include-item-base: false;
 @media all and (max-width: 1053px) {
 	#block-system-main-menu {
     clear: both;
+    ul.menu {
+      padding: 0;
+      li {
+        display: none;
+        a {
+	          height: 30px;
+          &#menu-responsive {
+	          display: block;
+            border: 0;
+            background: url(../images/sprite.png) no-repeat right -165px;
+          }
+        }
+        &.first {
+          display: block;
+        }
+      }
+    }
   }
 }
