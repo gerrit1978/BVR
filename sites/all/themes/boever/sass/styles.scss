@@ -343,18 +343,10 @@ p {
 /* Contact form */
 .webform-client-form {
   .webform-component {
-    clear: both;
-    padding-bottom: 20px;
 	  label {
-	    float: left;
-	    width: 15%;
 	    font-weight: 300;
-	    text-align: right;
-	    padding-right: 10px;
 	  }
 	  input.form-text, textarea {
-      float: left;
-      width: 84%;
       border: 1px solid #aaaaaa;
       background: #ededed;
 	  }
@@ -364,11 +356,8 @@ p {
 	  }
   }
   #edit-actions {
-    clear: both;
-    padding-top: 20px;
     .form-submit {
       background: $mainRed;
-      float: right;
       text-transform: uppercase;
       color: white;
       border: none;
